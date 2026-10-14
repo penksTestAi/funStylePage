@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Days Since Incident · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --soft: #e7e7e7; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --soft: #262626; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --soft: #262626; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: #fff; border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+</style>
+</head>
+<body>
+<main>
+<h1>Days Since Incident</h1><p class="blurb">Days since the great sandwich spill, and counting.</p>
+<div class="big" id="days">0</div>
+<button id="reset">Report another incident</button>
+<div class="card">Incidents reported this session: <strong id="count"></strong></div>
+<a class="back" href="../../">← all games and stuff</a>
+</main>
+<script>
+      let start = Date.now() - 218 * 864e5, count = 7;
+      const days = () => Math.floor((Date.now() - start) / 864e5);
+      const tick = () => document.getElementById("days").textContent = days().toLocaleString("en-US");
+      document.getElementById("reset").onclick = () => { start = Date.now(); count++; document.getElementById("count").textContent = count; tick(); };
+      document.getElementById("count").textContent = count;
+      tick(); setInterval(tick, 60000);</script>
+</body>
+</html>

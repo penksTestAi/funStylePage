@@ -8,7 +8,8 @@ Last updated: 2026-10-14
 - `index.html` landing grid; reads `experiments.json`.
 - Two posts generated locally: `experiments/spend-0001`, `experiments/days-0002`. Landing and one experiment checked in the browser, no console errors.
 - `.github/workflows/post.yml`: deploys Pages on push to `main` (site paths); manual dispatch also runs the generator.
-- Claude routine `funStylePage` (trigger `trig_01R2qUkcTzG93pSDNL17YF1Y`): every 2 hours, runs the generator and pushes to `main`. Server set the minute to :49 (cron `49 */2 * * *`).
+- Claude routine `funStylePage` (trigger `trig_01R2qUkcTzG93pSDNL17YF1Y`): PAUSED. Its pushes failed with 403 because Claude has no GitHub access to penksTestAi/funStylePage.
+- Posting moved back to the GitHub Actions cron (`0 */2 * * *`), which uses the repo token and needs no account.
 - Repo renamed to `penksTestAi/funStylePage` (was `neal-fun-style`). Pages: https://penkstestai.github.io/funStylePage/
 - Pushed to `main` on funStylePage. Routine posts and the Pages deploy run from there.
 - Added original SVG illustrations per type, CSS motion, and confetti on button presses (mid-task request: more visuals and life, inspired by neal.fun but no copied ideas).

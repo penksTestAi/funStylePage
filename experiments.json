@@ -1,5 +1,13 @@
 [
   {
+    "slug": "consent-0013",
+    "type": "consent",
+    "title": "Cookie Notice",
+    "blurb": "Every choice you make adds more choices. You can still leave.",
+    "date": "2026-10-14T16:21:00.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A cookie with a bite out of it, sitting above a banner of buttons that keeps getting longer\">\n    <circle class=\"bob\" cx=\"100\" cy=\"42\" r=\"30\" fill=\"#c98a4b\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <circle cx=\"116\" cy=\"26\" r=\"9\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <g fill=\"#5a3418\"><circle cx=\"86\" cy=\"36\" r=\"3\"/><circle cx=\"100\" cy=\"52\" r=\"3\"/><circle cx=\"112\" cy=\"44\" r=\"3\"/><circle cx=\"82\" cy=\"54\" r=\"2.5\"/></g>\n    <rect x=\"16\" y=\"82\" width=\"168\" height=\"30\" rx=\"6\" fill=\"var(--soft)\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <rect x=\"24\" y=\"90\" width=\"40\" height=\"14\" rx=\"3\" fill=\"#1a6ef0\"/>\n    <rect x=\"70\" y=\"90\" width=\"40\" height=\"14\" rx=\"3\" fill=\"#ffb020\"/>\n    <rect class=\"pulse\" x=\"116\" y=\"90\" width=\"30\" height=\"14\" rx=\"3\" fill=\"#2bb673\"/>\n    <rect class=\"pulse d2\" x=\"150\" y=\"90\" width=\"26\" height=\"14\" rx=\"3\" fill=\"#ff5c8a\"/>\n  </svg>"
+  },
+  {
     "slug": "form-0012",
     "type": "form",
     "title": "Form 12-B",

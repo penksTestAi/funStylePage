@@ -29,6 +29,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `progress` | A loading bar that races to 99%, stalls, and offers ever more excuses. |
 | `plant` | A sulky houseplant. Water it and move it toward or away from the window; it has opinions, and a state it will grudgingly accept. |
 | `form` | A bureaucratic form where every required field needs another field first. It can still be finished, via the one optional field. |
+| `consent` | A cookie notice whose options multiply as you choose. "Continue with these" is always there, so it can be finished. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 

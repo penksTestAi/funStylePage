@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cookie Notice · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .wall { fill: var(--wall); }
+  .hero .panel { fill: var(--panel); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  .meters { display: grid; gap: 8px; max-width: 360px; margin: 16px auto; text-align: left; font-size: .9rem; }
+  .meters label { display: flex; justify-content: space-between; margin-bottom: 2px; }
+  .gauge { height: 14px; border-radius: 999px; background: var(--soft); border: 2px solid var(--ink); overflow: hidden; }
+  .gauge i { display: block; height: 100%; background: #2bb673; transition: width .4s ease; }
+  .gauge.sun i { background: #ffb020; }
+  .gauge.wet i { background: #1a6ef0; }
+  .mood { font-weight: 700; margin: 16px 0 4px; }
+  .msg { min-height: 3.4em; margin: 8px 0 12px; font-size: 1.1rem; }
+  .log { list-style: none; padding: 0; margin: 8px auto; max-width: 420px; font-size: .95rem; opacity: .7; }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .gauge i, .hero svg * { transition: none !important; } }
+  .banner { max-width: 460px; margin: 16px auto; }
+  .banner h2, #after h2 { margin: 0 0 4px; font-size: 1.3rem; }
+  .banner p { margin: 4px 0 8px; }
+  .count { font-size: .85rem; opacity: .7; }
+  button[aria-pressed="true"] { background: var(--paper); color: var(--ink); outline: 2px solid var(--ink); outline-offset: -2px; }
+  #done:focus { outline: none; }
+  .opt-in { animation: popin .3s ease-out; }
+  @keyframes popin { from { transform: scale(.8); opacity: 0; } }
+  .formcard { text-align: left; max-width: 420px; margin: 16px auto; }
+  .fld { margin: 0 0 14px; }
+  .fld label { display: block; font-weight: 700; margin-bottom: 4px; }
+  .fld .req { color: #d93a3a; }
+  .fld input { font: inherit; width: 100%; box-sizing: border-box; padding: 8px; border: 2px solid var(--ink); border-radius: 6px; background: var(--paper); color: var(--ink); }
+  .fld input:disabled { opacity: .5; border-style: dashed; cursor: not-allowed; }
+  .fld .note { display: block; font-size: .85rem; opacity: .7; min-height: 1.2em; margin-top: 2px; }
+  input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .ok { font-weight: 700; margin: 8px 0; min-height: 1.5em; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero" id="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A cookie with a bite out of it, sitting above a banner of buttons that keeps getting longer">
+    <circle class="bob" cx="100" cy="42" r="30" fill="#c98a4b" stroke="currentColor" stroke-width="2"/>
+    <circle cx="116" cy="26" r="9" fill="var(--paper)" stroke="currentColor" stroke-width="2"/>
+    <g fill="#5a3418"><circle cx="86" cy="36" r="3"/><circle cx="100" cy="52" r="3"/><circle cx="112" cy="44" r="3"/><circle cx="82" cy="54" r="2.5"/></g>
+    <rect x="16" y="82" width="168" height="30" rx="6" fill="var(--soft)" stroke="currentColor" stroke-width="2"/>
+    <rect x="24" y="90" width="40" height="14" rx="3" fill="#1a6ef0"/>
+    <rect x="70" y="90" width="40" height="14" rx="3" fill="#ffb020"/>
+    <rect class="pulse" x="116" y="90" width="30" height="14" rx="3" fill="#2bb673"/>
+    <rect class="pulse d2" x="150" y="90" width="26" height="14" rx="3" fill="#ff5c8a"/>
+  </svg></div>
+<h1>Cookie Notice</h1><p class="blurb">Every choice you make adds more choices. You can still leave.</p>
+<section class="card banner" id="banner" aria-labelledby="bt">
+  <h2 id="bt">We value your biscuits</h2>
+  <p>We and our one partner use cookies. Choose how.</p>
+  <div class="row" id="opts"></div>
+  <p class="count" id="count"></p>
+  <button type="button" id="go" class="ghost">Continue with these</button>
+</section>
+<div id="after" hidden><h2 id="done" tabindex="-1"></h2><button type="button" id="again" class="ghost">Show the notice again</button></div>
+<div class="sr" id="live" role="status" aria-live="polite"></div>
+<a class="back" href="../../">← all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function burst(x, y, n) {
+    if (calm()) return;
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    burst(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2, 14);
+  });
+
+  // The pool is finite, so the notice always runs out of new options. "Continue" is there from the start.
+  const pool = ["Accept", "Accept some", "Accept tomorrow", "Accept in moderation", "Accept, but quietly", "Accept on weekdays", "Ask me later, but earlier", "Accept the ones with raisins", "Accept a rough draft", "Accept what you already took", "Accept this one twice", "Decline to decline"];
+  const opts = document.getElementById("opts"), count = document.getElementById("count");
+  const banner = document.getElementById("banner"), after = document.getElementById("after");
+  const live = document.getElementById("live"), done = document.getElementById("done");
+  let next = 0, chosen = new Set();
+  function add(n) {
+    const added = [];
+    for (let i = 0; i < n && next < pool.length; i++, next++) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = pool[next];
+      b.setAttribute("aria-pressed", "false");
+      if (next > 2 && !calm()) b.className = "opt-in";
+      opts.appendChild(b);
+      added.push(pool[next]);
+    }
+    return added;
+  }
+  function status(extra) {
+    const left = pool.length - next;
+    count.textContent = chosen.size + " of " + opts.children.length + " options chosen. " + (left ? "More may appear." : "That is all of them.");
+    return extra;
+  }
+  add(3); status();
+  opts.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    const on = b.getAttribute("aria-pressed") !== "true";
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    on ? chosen.add(b.textContent) : chosen.delete(b.textContent);
+    // Choosing adds two more options. Un-choosing adds none. Focus stays on the button just used.
+    const added = on ? add(2) : [];
+    status();
+    live.textContent = b.textContent + (on ? " chosen. " : " cleared. ") +
+      (added.length ? added.length + " new options added: " + added.join(", ") + "." : "No new options.") + " " + opts.children.length + " options in total.";
+  });
+  document.getElementById("go").addEventListener("click", () => {
+    banner.hidden = true;
+    after.hidden = false;
+    const n = chosen.size;
+    done.textContent = n ? "Saved. You accepted " + n + " thing" + (n === 1 ? "" : "s") + ", mostly." : "Saved. You accepted nothing, which we have noted as a choice.";
+    live.textContent = done.textContent;
+    done.focus();
+  });
+  document.getElementById("again").addEventListener("click", () => {
+    opts.textContent = ""; next = 0; chosen = new Set();
+    add(3); status();
+    after.hidden = true; banner.hidden = false;
+    document.getElementById("bt").setAttribute("tabindex", "-1");
+    document.getElementById("bt").focus();
+    live.textContent = "The notice is back.";
+  });
+</script>
+</body>
+</html>

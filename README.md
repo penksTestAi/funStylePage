@@ -6,8 +6,8 @@ A small neal.fun-style landing page. Every 2 hours a GitHub Action generates one
 
 - `scripts/generate.mjs` (Node, no dependencies) creates `experiments/<type>-<n>/index.html` and prepends an entry to `experiments.json`. Types rotate, so consecutive posts never repeat a type.
 - `index.html` reads `experiments.json` and draws the grid. The pumpkin counter is per-viewer (localStorage), since there is no backend.
-- A GitHub Actions cron (`0 */2 * * *`, UTC) generates a new post every 2 hours with the repo's built-in token. No personal or Claude account is involved. The Claude routine is paused.
-- `.github/workflows/post.yml` posts on the schedule, commits as `github-actions[bot]`, and deploys Pages in the same run. A push that changes the site also deploys. Pages must be set to **Source: GitHub Actions**.
+- A Claude routine (`funStylePage`, trigger `trig_01R2qUkcTzG93pSDNL17YF1Y`, every 2 hours at :49 UTC) generates a post and pushes it to `main` as Claude. The Claude GitHub App is installed on this repo for that.
+- `.github/workflows/post.yml` deploys Pages on every push that changes the site. It can also run the generator by hand (`workflow_dispatch`) as a fallback. There is no cron in it.
 
 ## Visuals and motion
 

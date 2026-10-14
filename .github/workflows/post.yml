@@ -1,12 +1,9 @@
-# Posts every 2 hours with the repo's own GITHUB_TOKEN (no personal or Claude account needed).
-# The post job commits and then the deploy job publishes Pages in the same run, because pushes
-# made with GITHUB_TOKEN do not trigger other workflows.
+# The 2-hour posting is done by the Claude routine, which pushes to main. A push that changes the
+# site triggers the deploy job below. The post job is a manual fallback (workflow_dispatch) and does
+# not run on a schedule, so there is only one poster.
 name: Post new experiment
 
 on:
-  schedule:
-    # Every 2 hours, on the hour (UTC). GitHub may start scheduled runs 10-30 min late.
-    - cron: "0 */2 * * *"
   push:
     branches: [main]
     paths:
@@ -24,7 +21,7 @@ concurrency:
 
 jobs:
   post:
-    # Runs on the schedule and by hand. A push (for example a human edit to the site) only deploys.
+    # Runs only by hand. A push (the routine, or a human edit to the site) only deploys.
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:

@@ -1,9 +1,7 @@
 name: Post new experiment
 
+# The 2-hour posting is done by a Claude routine, so this workflow only runs on demand.
 on:
-  schedule:
-    # Every 2 hours, on the hour (UTC). GitHub may start scheduled runs 10-30 min late.
-    - cron: "0 */2 * * *"
   workflow_dispatch:
 
 permissions:

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Form 12-B · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .wall { fill: var(--wall); }
+  .hero .panel { fill: var(--panel); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  .meters { display: grid; gap: 8px; max-width: 360px; margin: 16px auto; text-align: left; font-size: .9rem; }
+  .meters label { display: flex; justify-content: space-between; margin-bottom: 2px; }
+  .gauge { height: 14px; border-radius: 999px; background: var(--soft); border: 2px solid var(--ink); overflow: hidden; }
+  .gauge i { display: block; height: 100%; background: #2bb673; transition: width .4s ease; }
+  .gauge.sun i { background: #ffb020; }
+  .gauge.wet i { background: #1a6ef0; }
+  .mood { font-weight: 700; margin: 16px 0 4px; }
+  .msg { min-height: 3.4em; margin: 8px 0 12px; font-size: 1.1rem; }
+  .log { list-style: none; padding: 0; margin: 8px auto; max-width: 420px; font-size: .95rem; opacity: .7; }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .gauge i, .hero svg * { transition: none !important; } }
+  .formcard { text-align: left; max-width: 420px; margin: 16px auto; }
+  .fld { margin: 0 0 14px; }
+  .fld label { display: block; font-weight: 700; margin-bottom: 4px; }
+  .fld .req { color: #d93a3a; }
+  .fld input { font: inherit; width: 100%; box-sizing: border-box; padding: 8px; border: 2px solid var(--ink); border-radius: 6px; background: var(--paper); color: var(--ink); }
+  .fld input:disabled { opacity: .5; border-style: dashed; cursor: not-allowed; }
+  .fld .note { display: block; font-size: .85rem; opacity: .7; min-height: 1.2em; margin-top: 2px; }
+  input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .ok { font-weight: 700; margin: 8px 0; min-height: 1.5em; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero" id="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A clipboard holding a form, with a pen on a chain going round in a circle">
+    <rect x="62" y="8" width="76" height="104" rx="6" fill="#c98a4b" stroke="currentColor" stroke-width="2"/>
+    <rect x="70" y="18" width="60" height="88" rx="2" fill="#fff" stroke="currentColor" stroke-width="2"/>
+    <rect x="86" y="4" width="28" height="12" rx="3" fill="#9aa4b2" stroke="currentColor" stroke-width="2"/>
+    <path d="M78 34 H122 M78 46 H112 M78 58 H122 M78 70 H104" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <rect x="78" y="80" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path class="pulse" d="M80 88 L84 92 L92 82" fill="none" stroke="#2bb673" stroke-width="2.4" stroke-linecap="round"/>
+    <g class="bob"><path d="M28 94 L52 62 L58 66 L34 98Z" fill="#ffc94d" stroke="currentColor" stroke-width="2"/><path d="M28 94 L26 102 L34 98Z" fill="currentColor"/></g>
+    <circle class="spin" cx="162" cy="60" r="16" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 5"/>
+    <path d="M138 60 H146" stroke="currentColor" stroke-width="2"/>
+  </svg></div>
+<h1>Form 12-B</h1><p class="blurb">Every required field needs another field first. It can still be finished.</p>
+<form class="card formcard" id="form" autocomplete="off" novalidate></form>
+<div class="ok" id="msg" role="status" aria-live="polite"></div>
+<a class="back" href="../../">← all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function burst(x, y, n) {
+    if (calm()) return;
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    burst(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2, 14);
+  });
+
+  // Each field may need another field first. The chain ends at an optional field that needs nothing.
+  const fields = [
+    { id: "name", label: "Full name", req: true, needs: "dob" },
+    { id: "dob", label: "Date of birth", req: true, needs: "addr" },
+    { id: "addr", label: "Current address", req: true, needs: "prev" },
+    { id: "prev", label: "Previous address", req: true, needs: "ref" },
+    { id: "ref", label: "Reference number from a previous form", req: false, needs: null }
+  ];
+  const by = Object.fromEntries(fields.map(f => [f.id, f]));
+  const form = document.getElementById("form"), msg = document.getElementById("msg");
+  form.innerHTML = fields.map(f =>
+    '<div class="fld"><label for="f_' + f.id + '">' + f.label + (f.req ? ' <span class="req" aria-hidden="true">*</span><span class="sr"> (required)</span>' : ' (optional)') + '</label>' +
+    '<input id="f_' + f.id + '" type="text" aria-describedby="n_' + f.id + '"><span class="note" id="n_' + f.id + '"></span></div>'
+  ).join("") + '<button type="submit" id="go">Submit</button>';
+  const val = id => document.getElementById("f_" + id).value.trim();
+  function unlocked(f) { return !f.needs || (val(f.needs) !== "" && unlocked(by[f.needs])); }
+  function render() {
+    let done = true;
+    fields.forEach(f => {
+      const el = document.getElementById("f_" + f.id), ok = unlocked(f);
+      el.disabled = !ok;
+      if (!ok) el.value = "";
+      document.getElementById("n_" + f.id).textContent = ok ? "" : "Requires: " + by[f.needs].label + ", which is not filled in yet.";
+      if (f.req && val(f.id) === "") done = false;
+    });
+    document.getElementById("go").disabled = !done;
+  }
+  form.addEventListener("input", render);
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (document.getElementById("go").disabled) return;
+    msg.textContent = "Accepted. Please file a copy of this acceptance on Form 12-C.";
+    const r = form.getBoundingClientRect();
+    burst(r.left + r.width / 2, r.top + 40, 24);
+    form.reset();
+    render();
+    // The button is disabled again, so keep keyboard focus on the first field that is open.
+    document.getElementById("f_" + fields.find(unlocked).id).focus();
+  });
+  render();
+</script>
+</body>
+</html>

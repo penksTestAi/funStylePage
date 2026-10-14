@@ -1,5 +1,13 @@
 [
   {
+    "slug": "form-0012",
+    "type": "form",
+    "title": "Form 12-B",
+    "blurb": "Every required field needs another field first. It can still be finished.",
+    "date": "2026-10-14T14:20:00.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A clipboard holding a form, with a pen on a chain going round in a circle\">\n    <rect x=\"62\" y=\"8\" width=\"76\" height=\"104\" rx=\"6\" fill=\"#c98a4b\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <rect x=\"70\" y=\"18\" width=\"60\" height=\"88\" rx=\"2\" fill=\"#fff\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <rect x=\"86\" y=\"4\" width=\"28\" height=\"12\" rx=\"3\" fill=\"#9aa4b2\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <path d=\"M78 34 H122 M78 46 H112 M78 58 H122 M78 70 H104\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"78\" y=\"80\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <path class=\"pulse\" d=\"M80 88 L84 92 L92 82\" fill=\"none\" stroke=\"#2bb673\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n    <g class=\"bob\"><path d=\"M28 94 L52 62 L58 66 L34 98Z\" fill=\"#ffc94d\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M28 94 L26 102 L34 98Z\" fill=\"currentColor\"/></g>\n    <circle class=\"spin\" cx=\"162\" cy=\"60\" r=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-dasharray=\"6 5\"/>\n    <path d=\"M138 60 H146\" stroke=\"currentColor\" stroke-width=\"2\"/>\n  </svg>"
+  },
+  {
     "slug": "plant-0011",
     "type": "plant",
     "title": "Fern Opinions",

@@ -30,6 +30,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `plant` | A sulky houseplant. Water it and move it toward or away from the window; it has opinions, and a state it will grudgingly accept. |
 | `form` | A bureaucratic form where every required field needs another field first. It can still be finished, via the one optional field. |
 | `consent` | A cookie notice whose options multiply as you choose. "Continue with these" is always there, so it can be finished. |
+| `dial` | An old radio tuner you drag through static. Six short text stations come in clearly; hear them all and the night ends. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 

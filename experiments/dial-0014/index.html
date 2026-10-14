@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dial 14 · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626;  }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626;  }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .spin, .roll, .pulse { transform-box: fill-box; transform-origin: center; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  .tuner { max-width: 460px; margin: 16px auto; text-align: left; }
+  .freq { font-size: 2.2rem; font-weight: 700; font-variant-numeric: tabular-nums; text-align: center; }
+  .freq small { font-size: 1rem; opacity: .7; font-weight: 400; }
+  .screen { background: var(--soft); border: 2px solid var(--ink); border-radius: 8px; padding: 12px; min-height: 6.5em; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 1.05rem; line-height: 1.5; overflow-wrap: anywhere; }
+  .screen .name { display: block; font-weight: 700; font-size: .85rem; letter-spacing: .06em; text-transform: uppercase; min-height: 1.4em; opacity: .8; margin-bottom: 4px; }
+  .screen.lock { outline: 3px solid #2bb673; outline-offset: 2px; }
+  .scale { position: relative; margin-top: 16px; }
+  .ticks { height: 22px; border-radius: 4px; border: 2px solid var(--ink); background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4.9%) bottom / 100% 40% no-repeat, var(--paper); }
+  input[type=range] { -webkit-appearance: none; appearance: none; position: absolute; left: 0; top: -6px; width: 100%; height: 34px; margin: 0; background: transparent; cursor: grab; touch-action: pan-y; }
+  input[type=range]:active { cursor: grabbing; }
+  input[type=range]::-webkit-slider-runnable-track { height: 34px; background: transparent; }
+  input[type=range]::-moz-range-track { height: 34px; background: transparent; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 8px; height: 34px; border-radius: 3px; background: #d93a3a; border: 2px solid var(--ink); }
+  input[type=range]::-moz-range-thumb { width: 6px; height: 30px; border-radius: 3px; background: #d93a3a; border: 2px solid var(--ink); }
+  input[type=range]:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+  .ends { display: flex; justify-content: space-between; font-size: .8rem; opacity: .7; margin-top: 4px; }
+  .heard { margin: 16px 0 4px; text-align: center; font-weight: 700; }
+  .pips { display: flex; justify-content: center; gap: 6px; margin-bottom: 8px; }
+  .pips i { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); background: var(--paper); }
+  .pips i.on { background: #2bb673; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero" id="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A small old radio with a glowing dial window and a needle that drifts back and forth, with sound waves leaving it">
+    <rect x="34" y="30" width="132" height="76" rx="10" fill="#c98a4b" stroke="currentColor" stroke-width="2"/>
+    <rect x="44" y="40" width="72" height="22" rx="3" fill="var(--paper)" stroke="currentColor" stroke-width="2"/>
+    <path d="M52 56 V50 M62 56 V46 M72 56 V50 M82 56 V46 M92 56 V50 M102 56 V46" stroke="currentColor" stroke-width="1.5"/>
+    <rect class="roll" x="55" y="42" width="2.5" height="18" fill="#d93a3a"/>
+    <circle cx="140" cy="52" r="12" fill="var(--soft)" stroke="currentColor" stroke-width="2"/>
+    <path class="spin" d="M140 52 L140 43" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <path d="M46 78 H154 M46 86 H154 M46 94 H154" stroke="#5a3418" stroke-width="2" stroke-linecap="round"/>
+    <path class="pulse" d="M174 56 q8 6 0 12" fill="none" stroke="#1a6ef0" stroke-width="2" stroke-linecap="round"/>
+    <path class="pulse d2" d="M182 50 q14 12 0 24" fill="none" stroke="#1a6ef0" stroke-width="2" stroke-linecap="round"/>
+    <path class="pulse d3" d="M20 14 q-8 6 0 12 M10 8 q-14 12 0 24" fill="none" stroke="#ffb020" stroke-width="2" stroke-linecap="round"/>
+  </svg></div>
+<h1>Dial 14</h1><p class="blurb">An old radio, mostly static. Six stations are in there somewhere.</p>
+<section class="tuner" aria-label="Radio tuner">
+  <div class="freq"><span id="freq">99.0</span> <small>MHz</small></div>
+  <div class="screen" id="screen" aria-hidden="true"><span class="name" id="name"></span><span id="text"></span></div>
+  <div class="scale">
+    <div class="ticks"></div>
+    <input type="range" id="dial" min="87.5" max="108" step="0.1" value="99" aria-label="Tuning, megahertz" aria-valuetext="99.0 megahertz, static">
+  </div>
+  <div class="ends"><span>87.5</span><span>108</span></div>
+  <p class="heard"><span id="heard">0 of 6 stations heard</span></p>
+  <div class="pips" id="pips" aria-hidden="true"></div>
+  <div class="row"><button type="button" id="next" class="ghost">Nudge toward a station</button><button type="button" id="reset" class="ghost" hidden>Switch off and on again</button></div>
+</section>
+<div class="sr" id="live" role="status" aria-live="polite"></div>
+<a class="back" href="../../">← all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function burst(x, y, n) {
+    if (calm()) return;
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    burst(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2, 14);
+  });
+
+  const stations = [
+    { f: 88.4, n: "Sofa Shipping Forecast", t: "Light drifting, occasional cushion. Visibility good under the armrest." },
+    { f: 92.1, n: "Traffic Update", t: "A heron is standing in the left lane. Everyone is being very polite about it." },
+    { f: 96.3, n: "Request Line", t: "This one goes out to whoever left the kettle on in 1987. It is still warm." },
+    { f: 100.2, n: "Gardening Hour", t: "Your tomatoes are fine. They have always been fine. Please stop asking them." },
+    { f: 103.8, n: "Late News", t: "Nothing happened today, and it happened right on time." },
+    { f: 107.1, n: "The Weather, Indoors", t: "Mild, with a chance of somebody opening a window." }
+  ];
+  const FINALE = "That was every station we have. Good night. You may leave the dial wherever it is.";
+  const NOISE = "\u2592\u2591#%&*+~/=?";
+  const LOCK = 0.3, FADE = 1.6;
+  const dial = document.getElementById("dial"), fEl = document.getElementById("freq");
+  const screen = document.getElementById("screen"), nameEl = document.getElementById("name"), textEl = document.getElementById("text");
+  const heardEl = document.getElementById("heard"), pips = document.getElementById("pips"), live = document.getElementById("live");
+  const nextBtn = document.getElementById("next"), resetBtn = document.getElementById("reset");
+  let heard = new Set(), lastLocked = -1;
+  stations.forEach(() => pips.appendChild(document.createElement("i")));
+  const hash = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+  const noise = () => NOISE[Math.floor(Math.random() * NOISE.length)];
+
+  function nearest(f) {
+    let bi = 0, bd = 99;
+    stations.forEach((s, i) => { const d = Math.abs(s.f - f); if (d < bd) { bd = d; bi = i; } });
+    return { i: bi, d: bd };
+  }
+  function garble(str, p) {
+    let out = "";
+    for (let k = 0; k < str.length; k++) {
+      const c = str[k];
+      out += c === " " ? (p > 0.85 && Math.random() < .3 ? noise() : " ") : (hash(k) < p ? noise() : c);
+    }
+    return out;
+  }
+  function render() {
+    const f = parseFloat(dial.value), { i, d } = nearest(f);
+    fEl.textContent = f.toFixed(1);
+    const locked = d <= LOCK;
+    const p = locked ? 0 : Math.min(1, (d - LOCK) / FADE);
+    const done = heard.size === stations.length;
+    screen.classList.toggle("lock", locked);
+    if (locked) {
+      nameEl.textContent = stations[i].n;
+      textEl.textContent = stations[i].t;
+      if (lastLocked !== i) {
+        lastLocked = i;
+        const first = !heard.has(i);
+        heard.add(i);
+        update();
+        live.textContent = stations[i].n + ": " + stations[i].t + (first ? " New station. " + heard.size + " of " + stations.length + " heard." : "") + (heard.size === stations.length ? " " + FINALE : "");
+        if (first && heard.size === stations.length) finish();
+      }
+    } else {
+      lastLocked = -1;
+      nameEl.textContent = p < 0.6 ? "\u00b7 \u00b7 \u00b7 faintly: " + stations[i].n.split(" ")[0] : "";
+      textEl.textContent = garble(stations[i].t, p);
+    }
+    dial.setAttribute("aria-valuetext", f.toFixed(1) + " megahertz, " + (locked ? stations[i].n : p < 0.6 ? "faint voices" : "static"));
+  }
+  function update() {
+    heardEl.textContent = heard.size + " of " + stations.length + " stations heard";
+    [...pips.children].forEach((el, k) => el.classList.toggle("on", heard.has(k)));
+  }
+  function finish() {
+    heardEl.textContent = "All " + stations.length + " stations heard. " + FINALE;
+    resetBtn.hidden = false;
+  }
+  dial.addEventListener("input", render);
+  // Static crackles on its own, but only when motion is welcome.
+  setInterval(() => { if (!calm() && !screen.classList.contains("lock")) render(); }, 160);
+  nextBtn.addEventListener("click", () => {
+    const f = parseFloat(dial.value);
+    const unheard = stations.map((s, i) => i).filter((i) => !heard.has(i));
+    const pool = unheard.length ? unheard : stations.map((s, i) => i);
+    // Land close, never exactly on it: the last little bit is yours.
+    let best = pool.map((i) => stations[i]).sort((a, b) => Math.abs(a.f - f) - Math.abs(b.f - f))[0];
+    dial.value = (best.f + (best.f > f ? -0.9 : 0.9)).toFixed(1);
+    render();
+    live.textContent = "Moved to " + dial.value + ". Something is nearby.";
+  });
+  resetBtn.addEventListener("click", () => {
+    heard = new Set(); lastLocked = -1; dial.value = 99;
+    resetBtn.hidden = true; update(); render(); dial.focus();
+    live.textContent = "Radio reset. 0 of " + stations.length + " stations heard.";
+  });
+  update(); render();
+</script>
+</body>
+</html>

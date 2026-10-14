@@ -10,16 +10,18 @@ Last updated: 2026-10-14
 - `.github/workflows/post.yml`: deploys Pages on push to `main` (site paths); manual dispatch also runs the generator.
 - Claude routine `funStylePage` (trigger `trig_01R2qUkcTzG93pSDNL17YF1Y`): every 2 hours, runs the generator and pushes to `main`. Server set the minute to :49 (cron `49 */2 * * *`).
 - Repo renamed to `penksTestAi/funStylePage` (was `neal-fun-style`). Pages: https://penkstestai.github.io/funStylePage/
-- Local commit on `main` (see git log).
+- Pushed to `main` on funStylePage. Routine posts and the Pages deploy run from there.
+- Added original SVG illustrations per type, CSS motion, and confetti on button presses (mid-task request: more visuals and life, inspired by neal.fun but no copied ideas).
+- Older posts (spend-0001, days-0002, dilemma-0003, and the first routine post) predate the illustrations, so their landing cards show an empty thumbnail until replaced.
 - `README.md` with design notes and limits.
-- Git repo initialised locally on branch `main`. Not pushed yet.
 
 ## In progress
 - Nothing running.
 
 ## Blocked
-- **Repo creation under `penksTestAi`.** The local `gh` login is `penkert-adus`, which has no write access to `penksTestAi`. `penksTestAi` is a User account (not an org), and it already has other repos (`claude-studio`, `penksTestAi`). Needs one of: the `penksTestAi` login, or a decision to create the repo under `penkert-adus`.
-- **Not verified:** whether GitHub counts bot commits as activity for the 60-day scheduled-workflow disable.
+- Nothing blocked.
+- **Not verified:** whether GitHub counts bot commits as activity for the 60-day scheduled-workflow disable. The routine is the scheduler now, so this matters only if the routine is ever paused.
+- **Not verified:** the first routine run has not finished yet (next run was set for 08:49Z); check it with RemoteTrigger list_runs.
 
 ## Manual steps waiting on the user
 See the numbered block in the final message of the session that wrote this file.

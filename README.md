@@ -8,7 +8,10 @@ A small neal.fun-style landing page. Every 2 hours a GitHub Action generates one
 - `index.html` reads `experiments.json` and draws the grid. The pumpkin counter is per-viewer (localStorage), since there is no backend.
 - A Claude routine (`funStylePage`, trigger `trig_01R2qUkcTzG93pSDNL17YF1Y`) generates a new post every 2 hours and pushes it to `main`.
 - `.github/workflows/post.yml` deploys to GitHub Pages whenever a push changes the site (`experiments/`, `experiments.json`, `index.html`). It can also run the generator by hand from the Actions tab (`workflow_dispatch`). Pages must be set to **Source: GitHub Actions**.
-- A second job in the same workflow deploys the site to GitHub Pages with the Actions deploy (`configure-pages`, `upload-pages-artifact`, `deploy-pages`). Pages must be set to **Source: GitHub Actions**.
+
+## Visuals and motion
+
+Each experiment has one original SVG illustration at the top, and the landing grid shows the same art on every card. The art moves with CSS only (bobbing, spinning, rolling, pulsing, falling drops), and every button press throws a small confetti burst. Everything respects `prefers-reduced-motion`.
 
 ## Experiment types
 
@@ -22,7 +25,7 @@ A small neal.fun-style landing page. Every 2 hours a GitHub Action generates one
 | `scale` | Pick two things and see how many times bigger one is than the other (rough real sizes). |
 | `forecast` | A universe forecast, re-rolled on demand. |
 
-All copy and mechanics are original. The style is borrowed; the jokes are not copied.
+All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 
 ## Why neal.fun works (research notes)
 

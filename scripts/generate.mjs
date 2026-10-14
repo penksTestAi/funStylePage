@@ -22,7 +22,50 @@ function rngFrom(seed) {
 const pick = (rng, list) => list[Math.floor(rng() * list.length)];
 const between = (rng, lo, hi) => lo + rng() * (hi - lo);
 
-const SHELL = (title, body, script = "") => `<!doctype html>
+// Motion shared by experiment pages and the landing page. Original keyframes, nothing copied.
+const ANIM_CSS = `
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+`;
+
+// Confetti on every button press. Shared by all experiments.
+const HELPER = `
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = e.clientX + "px";
+      s.style.top = e.clientY + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  });
+`;
+
+const SHELL = (title, body, script = "", art = "") => `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -46,14 +89,16 @@ const SHELL = (title, body, script = "") => `<!doctype html>
   a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
   canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
   select { font: inherit; padding: 8px; max-width: 100%; }
+${ANIM_CSS}
 </style>
 </head>
 <body>
 <main>
+${art ? `<div class="hero">${art}</div>` : ""}
 ${body}
 <a class="back" href="../../">← all games and stuff</a>
 </main>
-<script>${script}</script>
+<script>${HELPER}${script}</script>
 </body>
 </html>
 `;
@@ -268,6 +313,78 @@ The lever would divert it toward <strong id="side">${scenario.side}</strong>.</d
   },
 };
 
+// One small original illustration per type. viewBox is fixed so every card and hero lines up.
+// Colours are hard-coded accents; outlines use currentColor so they follow light and dark themes.
+const ART = {
+  spend: () => `<svg viewBox="0 0 200 120" role="img" aria-label="Stack of gold coins">
+    <g class="bob">
+      <ellipse cx="80" cy="96" rx="40" ry="10" fill="#e89b10"/><rect x="40" y="84" width="80" height="12" fill="#e89b10"/>
+      <ellipse cx="80" cy="84" rx="40" ry="10" fill="#ffc94d"/><rect x="40" y="72" width="80" height="12" fill="#e89b10"/>
+      <ellipse cx="80" cy="72" rx="40" ry="10" fill="#ffc94d"/><rect x="40" y="60" width="80" height="12" fill="#e89b10"/>
+      <ellipse cx="80" cy="60" rx="40" ry="10" fill="#ffc94d"/>
+    </g>
+    <g class="spin"><circle cx="160" cy="34" r="16" fill="#ffc94d" stroke="currentColor" stroke-width="3"/>
+      <text x="160" y="40" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor">$</text></g>
+  </svg>`,
+
+  days: () => `<svg viewBox="0 0 200 120" role="img" aria-label="Calendar page">
+    <g class="bob">
+      <rect x="50" y="20" width="100" height="88" rx="10" fill="#fff" stroke="currentColor" stroke-width="3"/>
+      <rect x="50" y="20" width="100" height="22" rx="10" fill="#ff5c8a"/>
+      <text x="100" y="84" text-anchor="middle" font-size="34" font-weight="800" fill="currentColor">7</text>
+    </g>
+    <circle class="drop" cx="30" cy="30" r="6" fill="#ff5c8a"/>
+    <circle class="drop d2" cx="172" cy="40" r="5" fill="#ffb020"/>
+  </svg>`,
+
+  dilemma: () => `<svg viewBox="0 0 200 120" role="img" aria-label="Trolley on a track with a lever">
+    <path d="M10 98 H190" stroke="currentColor" stroke-width="3"/>
+    <path d="M10 106 H190" stroke="currentColor" stroke-width="2" stroke-dasharray="6 6"/>
+    <g class="roll">
+      <rect x="50" y="52" width="72" height="36" rx="8" fill="#1a6ef0"/>
+      <rect x="58" y="60" width="20" height="14" fill="#cfe2ff"/>
+      <circle cx="66" cy="96" r="7" fill="currentColor"/><circle cx="110" cy="96" r="7" fill="currentColor"/>
+    </g>
+    <line x1="140" y1="90" x2="168" y2="56" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="168" cy="54" r="6" fill="#ffb020"/>
+  </svg>`,
+
+  circle: () => `<svg viewBox="0 0 200 120" role="img" aria-label="A wobbly blob next to a dashed perfect circle">
+    <circle cx="100" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 6"/>
+    <path class="wobble" d="M100 18 C130 14 150 40 146 62 C142 90 118 106 96 102 C70 100 52 80 56 56 C60 30 74 20 100 18Z" fill="#2bb673" opacity=".85"/>
+  </svg>`,
+
+  settle: () => `<svg viewBox="0 0 200 120" role="img" aria-label="Two speech bubbles arguing">
+    <g class="bob">
+      <rect x="20" y="22" width="80" height="40" rx="10" fill="#1a6ef0"/><polygon points="36,62 52,62 34,78" fill="#1a6ef0"/>
+      <text x="60" y="50" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">?</text>
+    </g>
+    <g class="bob d2">
+      <rect x="100" y="60" width="80" height="40" rx="10" fill="#ff5c8a"/><polygon points="150,100 166,100 168,114" fill="#ff5c8a"/>
+      <text x="140" y="88" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">!</text>
+    </g>
+  </svg>`,
+
+  scale: () => `<svg viewBox="0 0 200 120" role="img" aria-label="A tiny person beside a tall stack of blocks">
+    <g class="bob">
+      <circle cx="50" cy="40" r="12" fill="currentColor"/>
+      <rect x="38" y="56" width="24" height="44" rx="8" fill="#2bb673"/>
+    </g>
+    <rect x="110" y="88" width="60" height="12" fill="#ffb020"/>
+    <rect x="118" y="72" width="44" height="16" fill="#ff5c8a"/>
+    <rect x="126" y="56" width="28" height="16" fill="#1a6ef0"/>
+    <rect x="134" y="40" width="12" height="16" fill="#2bb673"/>
+  </svg>`,
+
+  forecast: () => `<svg viewBox="0 0 200 120" role="img" aria-label="Cloud with rain and a pulsing sun">
+    <circle class="pulse" cx="150" cy="30" r="14" fill="#ffc94d"/>
+    <path d="M56 74 Q56 58 72 58 Q78 40 98 44 Q116 30 132 48 Q156 48 156 68 Q156 80 144 80 H68 Q56 80 56 74Z" fill="#dfe8f5" stroke="currentColor" stroke-width="2"/>
+    <line class="drop" x1="80" y1="88" x2="76" y2="104" stroke="#1a6ef0" stroke-width="3" stroke-linecap="round"/>
+    <line class="drop d2" x1="104" y1="88" x2="100" y2="104" stroke="#1a6ef0" stroke-width="3" stroke-linecap="round"/>
+    <line class="drop d3" x1="128" y1="88" x2="124" y2="104" stroke="#1a6ef0" stroke-width="3" stroke-linecap="round"/>
+  </svg>`,
+};
+
 const ORDER = Object.keys(TYPES);
 
 async function readManifest() {
@@ -286,9 +403,11 @@ const made = TYPES[typeId](rng);
 const slug = `${typeId}-${String(n).padStart(4, "0")}`;
 const date = new Date().toISOString();
 
-await mkdir(join(ROOT, "experiments", slug), { recursive: true });
-await writeFile(join(ROOT, "experiments", slug, "index.html"), SHELL(made.title, made.html, made.script));
+const art = ART[typeId]();
 
-const entry = { slug, type: typeId, title: made.title, blurb: made.blurb, date };
+await mkdir(join(ROOT, "experiments", slug), { recursive: true });
+await writeFile(join(ROOT, "experiments", slug, "index.html"), SHELL(made.title, made.html, made.script, art));
+
+const entry = { slug, type: typeId, title: made.title, blurb: made.blurb, date, art };
 await writeFile(MANIFEST, JSON.stringify([entry, ...manifest], null, 2) + "\n");
 console.log(`Generated experiments/${slug}/index.html (${made.title})`);

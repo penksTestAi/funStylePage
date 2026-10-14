@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Watched Pot · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .wall { fill: var(--wall); }
+  .hero .panel { fill: var(--panel); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+  .kettle { position: relative; margin: 16px auto; max-width: 320px; }
+  .gauge { height: 18px; border-radius: 999px; background: var(--soft); border: 2px solid var(--ink); overflow: hidden; }
+  .gauge i { display: block; height: 100%; width: 0; background: #ff5c3a; transition: width .15s linear; }
+  .temp { font-size: 1.1rem; font-variant-numeric: tabular-nums; margin: 8px 0; opacity: .75; }
+  .state { min-height: 1.6em; margin: 4px 0; font-size: 1.1rem; }
+  .msg { min-height: 3.2em; margin: 12px 0; font-size: 1.1rem; }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .away .gauge i { background: #ff9a3a; }
+  .cover { display: none; position: fixed; inset: 0; background: var(--paper); z-index: 5; align-items: center; justify-content: center; flex-direction: column; font-size: 1.1rem; }
+  .watching-off .cover { display: flex; }
+  .cover button { margin-top: 16px; }
+  @media (prefers-reduced-motion: reduce) { .gauge i { transition: none !important; } }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="Kettle with steam curling up">
+    <ellipse cx="100" cy="108" rx="52" ry="5" fill="#b9c2cf"/>
+    <path d="M62 100 Q56 60 82 50 H118 Q144 60 138 100Z" fill="#dfe8f5" stroke="currentColor" stroke-width="2"/>
+    <path d="M138 70 Q164 66 160 88" fill="none" stroke="currentColor" stroke-width="3"/>
+    <path d="M64 66 Q40 56 36 38" fill="none" stroke="currentColor" stroke-width="3"/>
+    <rect x="88" y="42" width="24" height="8" rx="3" fill="#b9c2cf" stroke="currentColor" stroke-width="2"/>
+    <circle class="pulse" cx="100" cy="76" r="6" fill="#ffc94d" stroke="currentColor" stroke-width="2"/>
+    <path class="drop" d="M34 30 Q28 22 36 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <path class="drop d2" d="M40 30 Q46 22 38 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <path class="drop d3" d="M37 32 Q31 24 39 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg></div>
+<h1>A Watched Pot</h1><p class="blurb">It heats when you are not looking.</p>
+<div class="kettle"><div class="gauge" role="progressbar" aria-label="Kettle heat" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"><i id="fill"></i></div></div>
+<div class="temp" id="temp">20 °C</div>
+<div class="state" id="state" role="status" aria-live="polite">Being watched.</div>
+<div class="row"><button id="away" type="button">Look away</button></div>
+<div class="count" id="count" style="opacity:.75">Boiled: 0</div>
+<div class="msg" id="msg" role="status" aria-live="polite">Stay still, or leave the tab, and it warms up.</div>
+<a class="back" href="../../">← all games and stuff</a>
+</main>
+<div class="cover" id="cover" role="dialog" aria-label="Looking away"><div>Not looking.</div><button id="back" type="button">Look back</button></div>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled || calm()) return;
+    // Keyboard activation has no pointer position (detail 0), so burst from the button's centre instead.
+    const r = b.getBoundingClientRect();
+    const x = e.detail ? e.clientX : r.left + r.width / 2;
+    const y = e.detail ? e.clientY : r.top + r.height / 2;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  });
+
+  const bar = document.getElementById("bar"), fill = document.getElementById("fill"), temp = document.getElementById("temp");
+  const state = document.getElementById("state"), msg = document.getElementById("msg"), cnt = document.getElementById("count");
+  const awayBtn = document.getElementById("away"), backBtn = document.getElementById("back");
+  const IDLE = 3000; // ms of stillness that counts as not looking
+  let heat = 0, boiled = 0, manual = false, lastMove = performance.now(), prev = performance.now(), won = false;
+  const seen = () => { lastMove = performance.now(); };
+  ["pointermove", "pointerdown", "keydown", "touchstart", "wheel"].forEach((t) => addEventListener(t, seen, { passive: true }));
+  function setManual(v) {
+    manual = v;
+    document.body.classList.toggle("watching-off", v);
+    if (v) backBtn.focus(); else awayBtn.focus();
+    seen();
+  }
+  awayBtn.onclick = () => setManual(true);
+  backBtn.onclick = () => setManual(false);
+  const notes = [[0, "Unwatched."], [30, "Faintly warm. Do not read into it."], [60, "It is thinking about it."], [85, "Nearly. Do not look."]];
+  function frame() {
+    const now = performance.now(), dt = Math.min((now - prev) / 1000, 2);
+    prev = now;
+    const away = document.hidden || manual || now - lastMove > IDLE;
+    if (!won) {
+      heat = Math.max(0, Math.min(100, heat + (away ? 4 : -10) * dt));
+      if (heat >= 100) {
+        won = true; boiled++;
+        cnt.textContent = "Boiled: " + boiled;
+        msg.textContent = boiled === 1 ? "It boiled. Nobody saw." : "Boiled again. Still nobody saw.";
+        state.textContent = "Boiling.";
+        confettiAt(innerWidth / 2, innerHeight / 3);
+        setTimeout(() => { won = false; heat = 0; msg.textContent = "Kettle emptied. Begin again."; }, 2500);
+      }
+    }
+    fill.style.width = heat + "%";
+    bar.setAttribute("aria-valuenow", Math.round(heat));
+    temp.textContent = Math.round(20 + heat * 0.8) + " °C";
+    document.body.classList.toggle("away", away);
+    if (!won) {
+      let t = notes[0][1];
+      for (const [h, x] of notes) if (heat >= h) t = x;
+      const next = away ? t : (heat > 0 ? "Cooling. It saw you." : "Being watched.");
+      // Only write on change: a live region re-announces on every write, and this runs ten times a second.
+      if (state.textContent !== next) state.textContent = next;
+    }
+  }
+  setInterval(frame, 100);
+  document.addEventListener("visibilitychange", () => { prev = performance.now(); seen(); if (document.hidden) lastMove = performance.now() - IDLE - 1; });
+  function confettiAt(x, y) {
+    if (calm()) return;
+    for (let i = 0; i < 24; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px"; s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 240 - 120) + "px");
+      s.style.setProperty("--dy", (Math.random() * -200 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+</script>
+</body>
+</html>

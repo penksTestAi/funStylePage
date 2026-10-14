@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fern Opinions · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .wall { fill: var(--wall); }
+  .hero .panel { fill: var(--panel); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  .meters { display: grid; gap: 8px; max-width: 360px; margin: 16px auto; text-align: left; font-size: .9rem; }
+  .meters label { display: flex; justify-content: space-between; margin-bottom: 2px; }
+  .gauge { height: 14px; border-radius: 999px; background: var(--soft); border: 2px solid var(--ink); overflow: hidden; }
+  .gauge i { display: block; height: 100%; background: #2bb673; transition: width .4s ease; }
+  .gauge.sun i { background: #ffb020; }
+  .gauge.wet i { background: #1a6ef0; }
+  .mood { font-weight: 700; margin: 16px 0 4px; }
+  .msg { min-height: 3.4em; margin: 8px 0 12px; font-size: 1.1rem; }
+  .log { list-style: none; padding: 0; margin: 8px auto; max-width: 420px; font-size: .95rem; opacity: .7; }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .gauge i, .hero svg * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero" id="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A houseplant in a pot beside a sunny window, looking unimpressed">
+    <rect x="132" y="14" width="56" height="74" rx="4" fill="#bfe3ff" stroke="currentColor" stroke-width="2"/>
+    <path d="M160 14 V88 M132 51 H188" stroke="currentColor" stroke-width="2"/>
+    <polygon class="pulse" points="132,30 132,88 96,112 96,70" fill="#ffc94d" opacity=".28"/>
+    <path d="M10 104 H190" stroke="currentColor" stroke-width="2"/>
+    <g style="transform:translateX(calc(var(--pos, 4) * 14px));transition:transform .5s ease">
+      <g class="wobble">
+        <path d="M44 84 C40 64 30 56 22 54 C26 70 34 80 44 84Z" fill="#2bb673" stroke="currentColor" stroke-width="2"/>
+        <path d="M46 84 C48 60 58 48 68 46 C66 66 58 78 46 84Z" fill="#2bb673" stroke="currentColor" stroke-width="2"/>
+        <path d="M45 84 C43 68 45 56 46 44" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="46" cy="40" r="7" fill="#ff5c8a" stroke="currentColor" stroke-width="2" style="opacity:var(--bloom, 0);transition:opacity .4s"/>
+      </g>
+      <path d="M32 84 H58 L54 104 H36Z" fill="#e0793f" stroke="currentColor" stroke-width="2"/>
+      <circle cx="42" cy="93" r="1.6" fill="currentColor"/><circle cx="50" cy="93" r="1.6" fill="currentColor"/>
+      <path d="M43 98 Q46 96 49 98" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </g>
+  </svg></div>
+<h1>Fern Opinions</h1><p class="blurb">A houseplant with views on its water and its window.</p>
+<div class="mood" id="mood">Sulking</div>
+<div class="msg" id="msg" role="status" aria-live="polite">It is pressed against the glass and it wants you to know.</div>
+<div class="meters">
+  <div><label><span>Window</span><span id="sunTxt"></span></label><div class="gauge sun"><i id="sunFill"></i></div></div>
+  <div><label><span>Water</span><span id="wetTxt"></span></label><div class="gauge wet"><i id="wetFill"></i></div></div>
+</div>
+<div class="row"><button id="water" type="button">Water it</button><button id="closer" type="button" class="ghost">Toward the window</button><button id="away" type="button" class="ghost">Away from the window</button></div>
+<ul class="log" id="log"></ul>
+<a class="back" href="../../">← all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function burst(x, y, n) {
+    if (calm()) return;
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    // Keyboard activation has no pointer position (detail 0), so burst from the button's centre instead.
+    const r = b.getBoundingClientRect();
+    burst(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2, 14);
+  });
+
+  const hero = document.getElementById("hero"), svg = hero.querySelector("svg");
+  const msg = document.getElementById("msg"), log = document.getElementById("log"), mood = document.getElementById("mood");
+  const sunLabels = ["Back corner", "Across the room", "Mid-room", "Near the glass", "On the glass"];
+  const wetLabels = ["Bone dry", "Damp-ish", "Just right", "Soggy", "Pond"];
+  const waterSays = [
+    "",
+    "A sip. Noted. Not thanked.",
+    "That is the correct amount. I am not going to say so out loud.",
+    "More than I asked for. I am a fern, not a harbour.",
+    "Glug. I am now a pond with a hat. The window would dry me out."
+  ];
+  const lightSays = [
+    "The back corner. I can see the radiator. We have a lot in common.",
+    "Dim, but I respect the restraint.",
+    "Oh. That is a nice amount of afternoon.",
+    "A bit bright. You have pointed my face at the sun.",
+    "Glare. I am being interrogated by the sky."
+  ];
+  let light = 4, wet = 0, happy = false, n = 0;
+  function say(t) {
+    msg.textContent = t;
+    n++;
+    if (log.firstElementChild && log.firstElementChild.textContent === t) return; // no repeats in a row
+    const li = document.createElement("li");
+    li.textContent = t;
+    log.prepend(li);
+    while (log.children.length > 4) log.lastChild.remove();
+  }
+  function render(first) {
+    svg.style.setProperty("--pos", light);
+    svg.style.setProperty("--bloom", happy ? 1 : 0);
+    document.getElementById("sunFill").style.width = (light + 1) * 20 + "%";
+    document.getElementById("wetFill").style.width = (wet + 1) * 20 + "%";
+    document.getElementById("sunTxt").textContent = sunLabels[light];
+    document.getElementById("wetTxt").textContent = wetLabels[wet];
+    mood.textContent = happy ? "Thriving, under protest" : (light === 2 || wet === 2) ? "Tolerating" : "Sulking";
+  }
+  function after(line) {
+    const was = happy;
+    happy = light === 2 && wet === 2;
+    render();
+    if (happy && !was) {
+      say("Oh no. I am comfortable. Please leave me exactly here and say nothing.");
+      const r = hero.getBoundingClientRect();
+      burst(r.left + r.width / 2, r.top + r.height / 3, 24);
+    } else if (!happy && was) {
+      say("And just like that it is all over. " + line);
+    } else if (happy) {
+      say("Still fine. Do not make it weird.");
+    } else {
+      say(line);
+    }
+  }
+  document.getElementById("water").onclick = () => {
+    if (wet === 4) { after("Full. Of water and of opinions."); return; }
+    wet++;
+    after(waterSays[wet]);
+  };
+  document.getElementById("closer").onclick = () => {
+    if (light === 4) { after("I am already touching the glass. Where would you like me to go, outside?"); return; }
+    light++;
+    const dried = wet > 0;
+    if (dried) wet--;
+    after(lightSays[light] + (dried ? " Also, the sun took some of my water." : ""));
+  };
+  document.getElementById("away").onclick = () => {
+    if (light === 0) { after("This is the back corner. There is no further back. I checked."); return; }
+    light--;
+    after(lightSays[light]);
+  };
+  render();
+</script>
+</body>
+</html>

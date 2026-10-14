@@ -1,5 +1,13 @@
 [
   {
+    "slug": "plant-0011",
+    "type": "plant",
+    "title": "Fern Opinions",
+    "blurb": "A houseplant with views on its water and its window.",
+    "date": "2026-10-14T12:21:00.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A houseplant in a pot beside a sunny window, looking unimpressed\">\n    <rect x=\"132\" y=\"14\" width=\"56\" height=\"74\" rx=\"4\" fill=\"#bfe3ff\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <path d=\"M160 14 V88 M132 51 H188\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <polygon class=\"pulse\" points=\"132,30 132,88 96,112 96,70\" fill=\"#ffc94d\" opacity=\".28\"/>\n    <path d=\"M10 104 H190\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <g style=\"transform:translateX(calc(var(--pos, 4) * 14px));transition:transform .5s ease\">\n      <g class=\"wobble\">\n        <path d=\"M44 84 C40 64 30 56 22 54 C26 70 34 80 44 84Z\" fill=\"#2bb673\" stroke=\"currentColor\" stroke-width=\"2\"/>\n        <path d=\"M46 84 C48 60 58 48 68 46 C66 66 58 78 46 84Z\" fill=\"#2bb673\" stroke=\"currentColor\" stroke-width=\"2\"/>\n        <path d=\"M45 84 C43 68 45 56 46 44\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/>\n        <circle cx=\"46\" cy=\"40\" r=\"7\" fill=\"#ff5c8a\" stroke=\"currentColor\" stroke-width=\"2\" style=\"opacity:var(--bloom, 0);transition:opacity .4s\"/>\n      </g>\n      <path d=\"M32 84 H58 L54 104 H36Z\" fill=\"#e0793f\" stroke=\"currentColor\" stroke-width=\"2\"/>\n      <circle cx=\"42\" cy=\"93\" r=\"1.6\" fill=\"currentColor\"/><circle cx=\"50\" cy=\"93\" r=\"1.6\" fill=\"currentColor\"/>\n      <path d=\"M43 98 Q46 96 49 98\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"/>\n    </g>\n  </svg>"
+  },
+  {
     "slug": "progress-0010",
     "type": "progress",
     "title": "Nearly There",

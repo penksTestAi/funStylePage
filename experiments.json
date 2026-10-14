@@ -1,5 +1,13 @@
 [
   {
+    "slug": "forecast-0007",
+    "type": "forecast",
+    "title": "Universe Forecast",
+    "blurb": "Accurate to within several weeks.",
+    "date": "2026-10-14T08:20:07.041Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"Cloud with rain and a pulsing sun\">\n    <circle class=\"pulse\" cx=\"150\" cy=\"30\" r=\"14\" fill=\"#ffc94d\"/>\n    <path d=\"M56 74 Q56 58 72 58 Q78 40 98 44 Q116 30 132 48 Q156 48 156 68 Q156 80 144 80 H68 Q56 80 56 74Z\" fill=\"#dfe8f5\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <line class=\"drop\" x1=\"80\" y1=\"88\" x2=\"76\" y2=\"104\" stroke=\"#1a6ef0\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n    <line class=\"drop d2\" x1=\"104\" y1=\"88\" x2=\"100\" y2=\"104\" stroke=\"#1a6ef0\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n    <line class=\"drop d3\" x1=\"128\" y1=\"88\" x2=\"124\" y2=\"104\" stroke=\"#1a6ef0\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n  </svg>"
+  },
+  {
     "slug": "scale-0006",
     "type": "scale",
     "title": "The Size of Things",

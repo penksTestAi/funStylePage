@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Universe Forecast · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --soft: #e7e7e7; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --soft: #262626; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --soft: #262626; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: #fff; border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+</style>
+</head>
+<body>
+<main>
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="Cloud with rain and a pulsing sun">
+    <circle class="pulse" cx="150" cy="30" r="14" fill="#ffc94d"/>
+    <path d="M56 74 Q56 58 72 58 Q78 40 98 44 Q116 30 132 48 Q156 48 156 68 Q156 80 144 80 H68 Q56 80 56 74Z" fill="#dfe8f5" stroke="currentColor" stroke-width="2"/>
+    <line class="drop" x1="80" y1="88" x2="76" y2="104" stroke="#1a6ef0" stroke-width="3" stroke-linecap="round"/>
+    <line class="drop d2" x1="104" y1="88" x2="100" y2="104" stroke="#1a6ef0" stroke-width="3" stroke-linecap="round"/>
+    <line class="drop d3" x1="128" y1="88" x2="124" y2="104" stroke="#1a6ef0" stroke-width="3" stroke-linecap="round"/>
+  </svg></div>
+<h1>Universe Forecast</h1><p class="blurb">Accurate to within several weeks.</p>
+<div class="card big" style="font-size:1.4rem" id="fc"></div>
+<button id="again">New forecast</button>
+<a class="back" href="../../">← all games and stuff</a>
+</main>
+<script>
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = e.clientX + "px";
+      s.style.top = e.clientY + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  });
+
+      const parts = {
+        when: ["Tomorrow", "Later this week", "Sometime in March", "At 3:14 PM, precisely"],
+        what: ["a 40% chance of Thursday", "light drizzle of unread emails", "a dense fog of small decisions", "clear skies, with a sudden urge to reorganise the spice rack", "a strong breeze from the direction of the fridge"],
+        where: ["over the western suburbs", "in your general area", "mostly indoors", "above the nearest pigeon"],
+      };
+      const pickOf = a => a[Math.floor(Math.random() * a.length)];
+      const roll = () => document.getElementById("fc").textContent = pickOf(parts.when) + ": " + pickOf(parts.what) + ", " + pickOf(parts.where) + ".";
+      document.getElementById("again").onclick = roll; roll();</script>
+</body>
+</html>

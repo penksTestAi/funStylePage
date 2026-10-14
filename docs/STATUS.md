@@ -7,7 +7,8 @@ Last updated: 2026-10-14
 - `scripts/generate.mjs`: generates one experiment per run, seven types, rotating. Tested all seven types in a scratch copy (scripts parse).
 - `index.html` landing grid; reads `experiments.json`.
 - Two posts generated locally: `experiments/spend-0001`, `experiments/days-0002`. Landing and one experiment checked in the browser, no console errors.
-- `.github/workflows/post.yml`: manual trigger only (cron removed); `post` job commits, `deploy` job publishes to Pages via the Actions deploy.
+- `.github/workflows/post.yml`: deploys Pages on push to `main` (site paths); manual dispatch also runs the generator.
+- Claude routine `funStylePage` (trigger `trig_01R2qUkcTzG93pSDNL17YF1Y`): every 2 hours, runs the generator and pushes to `main`. Server set the minute to :49 (cron `49 */2 * * *`).
 - Repo renamed to `penksTestAi/funStylePage` (was `neal-fun-style`). Pages: https://penkstestai.github.io/funStylePage/
 - Local commit on `main` (see git log).
 - `README.md` with design notes and limits.

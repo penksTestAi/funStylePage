@@ -1,7 +1,14 @@
+# The 2-hour posting is done by a Claude routine. It pushes new experiments to main,
+# and the push triggers the deploy job below. The post job only runs when started by hand.
 name: Post new experiment
 
-# The 2-hour posting is done by a Claude routine, so this workflow only runs on demand.
 on:
+  push:
+    branches: [main]
+    paths:
+      - "experiments/**"
+      - "experiments.json"
+      - "index.html"
   workflow_dispatch:
 
 permissions:
@@ -13,6 +20,7 @@ concurrency:
 
 jobs:
   post:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,6 +46,8 @@ jobs:
 
   deploy:
     needs: post
+    # Runs after a manual post, or directly on a push that changed the site.
+    if: ${{ always() && !cancelled() && (needs.post.result == 'success' || needs.post.result == 'skipped') }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

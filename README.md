@@ -32,6 +32,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `consent` | A cookie notice whose options multiply as you choose. "Continue with these" is always there, so it can be finished. |
 | `dial` | An old radio tuner you drag through static. Six short text stations come in clearly; hear them all and the night ends. |
 | `queue` | A phone support queue. Menu choices move your place in line, forwards and back, but a way to the front is always on offer. |
+| `tangle` | A knotted earbud cable. Drag it apart; stretch it nearly straight and it is untangled, then it slowly curls up again. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 

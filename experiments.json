@@ -1,5 +1,13 @@
 [
   {
+    "slug": "progress-0010",
+    "type": "progress",
+    "title": "Nearly There",
+    "blurb": "Ninety-nine percent of a thing.",
+    "date": "2026-10-14T11:50:00.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"Loading bar stuck just short of the end\">\n    <rect x=\"20\" y=\"52\" width=\"160\" height=\"22\" rx=\"11\" fill=\"#dfe8f5\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <rect x=\"23\" y=\"55\" width=\"150\" height=\"16\" rx=\"8\" fill=\"#2bb673\"/>\n    <rect class=\"shine\" x=\"23\" y=\"55\" width=\"30\" height=\"16\" rx=\"8\" fill=\"#fff\" opacity=\".35\"/>\n    <path d=\"M176 40 V86\" stroke=\"currentColor\" stroke-width=\"2\" stroke-dasharray=\"3 3\"/>\n    <circle class=\"spin\" cx=\"100\" cy=\"24\" r=\"9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-dasharray=\"14 8\" stroke-linecap=\"round\"/>\n    <circle class=\"pulse\" cx=\"100\" cy=\"98\" r=\"3\" fill=\"#ffc94d\" stroke=\"currentColor\" stroke-width=\"1.5\"/>\n    <circle class=\"pulse d2\" cx=\"112\" cy=\"98\" r=\"3\" fill=\"#ffc94d\" stroke=\"currentColor\" stroke-width=\"1.5\"/>\n    <circle class=\"pulse d3\" cx=\"124\" cy=\"98\" r=\"3\" fill=\"#ffc94d\" stroke=\"currentColor\" stroke-width=\"1.5\"/>\n  </svg>"
+  },
+  {
     "slug": "watch-0009",
     "type": "watch",
     "title": "A Watched Pot",

@@ -26,6 +26,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `forecast` | A universe forecast, re-rolled on demand. |
 | `button` | A Close Door button that counts every press. The door stays open. |
 | `watch` | A kettle that only heats while you are not looking (tab hidden, pointer still, or the Look away button). |
+| `progress` | A loading bar that races to 99%, stalls, and offers ever more excuses. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 

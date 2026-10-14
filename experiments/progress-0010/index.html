@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nearly There · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .wall { fill: var(--wall); }
+  .hero .panel { fill: var(--panel); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+  .track { position: relative; margin: 16px auto; max-width: 360px; }
+  .gauge { height: 22px; border-radius: 999px; background: var(--soft); border: 2px solid var(--ink); overflow: hidden; }
+  .gauge i { display: block; height: 100%; width: 0; background: #2bb673; }
+  .pct { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 8px 0; }
+  .msg { min-height: 3.4em; margin: 12px 0; font-size: 1.1rem; }
+  .log { list-style: none; padding: 0; margin: 8px auto; max-width: 420px; font-size: .95rem; opacity: .7; }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .shine { animation: shine 2.4s ease-in-out infinite alternate; }
+  @keyframes shine { to { transform: translateX(120px); } }
+  .shine { transform-box: fill-box; }
+  @media (prefers-reduced-motion: reduce) { .gauge i { transition: none !important; } }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="Loading bar stuck just short of the end">
+    <rect x="20" y="52" width="160" height="22" rx="11" fill="#dfe8f5" stroke="currentColor" stroke-width="2"/>
+    <rect x="23" y="55" width="150" height="16" rx="8" fill="#2bb673"/>
+    <rect class="shine" x="23" y="55" width="30" height="16" rx="8" fill="#fff" opacity=".35"/>
+    <path d="M176 40 V86" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"/>
+    <circle class="spin" cx="100" cy="24" r="9" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="14 8" stroke-linecap="round"/>
+    <circle class="pulse" cx="100" cy="98" r="3" fill="#ffc94d" stroke="currentColor" stroke-width="1.5"/>
+    <circle class="pulse d2" cx="112" cy="98" r="3" fill="#ffc94d" stroke="currentColor" stroke-width="1.5"/>
+    <circle class="pulse d3" cx="124" cy="98" r="3" fill="#ffc94d" stroke="currentColor" stroke-width="1.5"/>
+  </svg></div>
+<h1>Nearly There</h1><p class="blurb">Ninety-nine percent of a thing.</p>
+<div class="track"><div class="gauge" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"><i id="fill"></i></div></div>
+<div class="pct" id="pct">0%</div>
+<div class="msg" id="msg" role="status" aria-live="polite">Starting.</div>
+<div class="row"><button id="hurry" type="button">Hurry up</button><button id="again" type="button" class="ghost">Start over</button></div>
+<ul class="log" id="log"></ul>
+<a class="back" href="../../">← all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled || calm()) return;
+    // Keyboard activation has no pointer position (detail 0), so burst from the button's centre instead.
+    const r = b.getBoundingClientRect();
+    const x = e.detail ? e.clientX : r.left + r.width / 2;
+    const y = e.detail ? e.clientY : r.top + r.height / 2;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  });
+
+  const bar = document.getElementById("bar"), fill = document.getElementById("fill"), pct = document.getElementById("pct");
+  const msg = document.getElementById("msg"), log = document.getElementById("log");
+  const excuses = [
+    "Waiting on a reply.",
+    "Reticulating one last spline.",
+    "The last one percent is the heavy one.",
+    "Someone is carrying it up the stairs.",
+    "It is being reviewed by a committee of one.",
+    "The bar is fine. The number is the problem.",
+    "Checking whether 99 is already enough.",
+    "Mercury is in a mood.",
+    "Counting backwards to be sure.",
+    "The final percent has asked for a lawyer.",
+    "It has gone to get a second opinion about itself.",
+    "A bird is on the cable. We are being gentle.",
+    "The remaining percent was never ordered.",
+    "We lost it in the move. Looking.",
+    "Technically you are already there. Spiritually, no.",
+    "Please enjoy this excuse while the next one loads."
+  ];
+  let p = 0, n = 0, timer = 0, runId = 0;
+  function show(v) {
+    fill.style.width = v + "%";
+    pct.textContent = Math.floor(v) + "%";
+    bar.setAttribute("aria-valuenow", Math.floor(v));
+  }
+  function excuse() {
+    const t = n < excuses.length ? excuses[n] : "Excuse number " + (n + 1) + ". It is not getting better.";
+    n++;
+    msg.textContent = t;
+    const li = document.createElement("li");
+    li.textContent = n + ". " + t;
+    log.prepend(li);
+    while (log.children.length > 5) log.lastChild.remove();
+  }
+  function schedule() {
+    // Excuses arrive slightly faster each time, as if panicking.
+    clearTimeout(timer);
+    timer = setTimeout(() => { excuse(); schedule(); }, Math.max(1400, 4200 - n * 160));
+  }
+  function start() {
+    clearTimeout(timer);
+    const id = ++runId;
+    p = 0; n = 0; log.textContent = "";
+    msg.textContent = "Starting.";
+    show(0);
+    const t0 = performance.now();
+    (function step(now) {
+      if (id !== runId) return;
+      const x = calm() ? 1 : Math.min((now - t0) / 2600, 1);
+      p = 99 * (1 - Math.pow(1 - x, 3));
+      show(p);
+      if (x < 1) { requestAnimationFrame(step); return; }
+      show(99);
+      msg.textContent = "Almost.";
+      clearTimeout(timer);
+      timer = setTimeout(() => { excuse(); schedule(); }, 1800);
+    })(t0);
+  }
+  document.getElementById("hurry").onclick = () => { excuse(); schedule(); };
+  document.getElementById("again").onclick = start;
+  start();
+</script>
+</body>
+</html>

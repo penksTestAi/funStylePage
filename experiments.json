@@ -1,5 +1,13 @@
 [
   {
+    "slug": "settle-0005",
+    "type": "settle",
+    "title": "Let's Settle This",
+    "blurb": "A debate. A vote. No resolution.",
+    "date": "2026-10-14T08:15:10.499Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"Two speech bubbles arguing\">\n    <g class=\"bob\">\n      <rect x=\"20\" y=\"22\" width=\"80\" height=\"40\" rx=\"10\" fill=\"#1a6ef0\"/><polygon points=\"36,62 52,62 34,78\" fill=\"#1a6ef0\"/>\n      <text x=\"60\" y=\"50\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"800\" fill=\"#fff\">?</text>\n    </g>\n    <g class=\"bob d2\">\n      <rect x=\"100\" y=\"60\" width=\"80\" height=\"40\" rx=\"10\" fill=\"#ff5c8a\"/><polygon points=\"150,100 166,100 168,114\" fill=\"#ff5c8a\"/>\n      <text x=\"140\" y=\"88\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"800\" fill=\"#fff\">!</text>\n    </g>\n  </svg>"
+  },
+  {
     "slug": "circle-0004",
     "type": "circle",
     "title": "Draw a Perfect Circle",

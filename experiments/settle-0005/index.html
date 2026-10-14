@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Let's Settle This · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --soft: #e7e7e7; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --soft: #262626; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --soft: #262626; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: #fff; border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+</style>
+</head>
+<body>
+<main>
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="Two speech bubbles arguing">
+    <g class="bob">
+      <rect x="20" y="22" width="80" height="40" rx="10" fill="#1a6ef0"/><polygon points="36,62 52,62 34,78" fill="#1a6ef0"/>
+      <text x="60" y="50" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">?</text>
+    </g>
+    <g class="bob d2">
+      <rect x="100" y="60" width="80" height="40" rx="10" fill="#ff5c8a"/><polygon points="150,100 166,100 168,114" fill="#ff5c8a"/>
+      <text x="140" y="88" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">!</text>
+    </g>
+  </svg></div>
+<h1>Let's Settle This</h1><p class="blurb">A debate. A vote. No resolution.</p>
+<div class="card"><button id="vote0">A hot dog is a sandwich</button><div style="height:12px;background:var(--paper);border-radius:6px;overflow:hidden"><div id="bar0" style="height:12px;background:var(--accent);width:50%"></div></div><small id="pct0"></small></div>
+<div class="card"><button id="vote1">A hot dog is a taco</button><div style="height:12px;background:var(--paper);border-radius:6px;overflow:hidden"><div id="bar1" style="height:12px;background:var(--accent);width:50%"></div></div><small id="pct1"></small></div>
+<p id="verdict"></p>
+<a class="back" href="../../">← all games and stuff</a>
+</main>
+<script>
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = e.clientX + "px";
+      s.style.top = e.clientY + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  });
+
+      let votes = [109, 62];
+      const render = () => {
+        const total = votes[0] + votes[1];
+        [0, 1].forEach(i => {
+          const pct = Math.round(votes[i] / total * 100);
+          document.getElementById("bar" + i).style.width = pct + "%";
+          document.getElementById("pct" + i).textContent = pct + "% (" + votes[i] + " votes)";
+        });
+      };
+      [0, 1].forEach(i => document.getElementById("vote" + i).onclick = () => { votes[i]++; render(); document.getElementById("verdict").textContent = "Thanks. The debate continues."; });
+      render();</script>
+</body>
+</html>

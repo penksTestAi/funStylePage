@@ -1,5 +1,13 @@
 [
   {
+    "slug": "circle-0004",
+    "type": "circle",
+    "title": "Draw a Perfect Circle",
+    "blurb": "Draw one freehand. We will judge it.",
+    "date": "2026-10-14T07:58:08.220Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A wobbly blob next to a dashed perfect circle\">\n    <circle cx=\"100\" cy=\"60\" r=\"44\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-dasharray=\"4 6\"/>\n    <path class=\"wobble\" d=\"M100 18 C130 14 150 40 146 62 C142 90 118 106 96 102 C70 100 52 80 56 56 C60 30 74 20 100 18Z\" fill=\"#2bb673\" opacity=\".85\"/>\n  </svg>"
+  },
+  {
     "slug": "dilemma-0003",
     "type": "dilemma",
     "title": "Absurd Trolley Problem",

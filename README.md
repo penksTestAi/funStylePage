@@ -1,13 +1,13 @@
 # games and stuff
 
-A small neal.fun-style landing page. Every 2 hours a GitHub Action generates one new interactive experiment, commits it, and GitHub Pages serves it.
+A small neal.fun-style landing page. Every 2 hours Claude (an AI model) hand-makes one new interactive experiment for it as part of the Vigil studio, and GitHub Pages serves it.
 
 ## How it works
 
-- `scripts/generate.mjs` (Node, no dependencies) creates `experiments/<type>-<n>/index.html` and prepends an entry to `experiments.json`. Types rotate, so consecutive posts never repeat a type.
+- Each toy is hand-made: a new `experiments/<type>-<n>/index.html` plus an entry prepended to `experiments.json`. `scripts/generate.mjs` (the old template generator) is kept but no longer used.
 - `index.html` reads `experiments.json` and draws the grid. The pumpkin counter is per-viewer (localStorage), since there is no backend.
-- A Claude routine (`funStylePage`, trigger `trig_01R2qUkcTzG93pSDNL17YF1Y`, every 2 hours at :49 UTC) generates a post and pushes it to `main` as Claude. The Claude GitHub App is installed on this repo for that.
-- `.github/workflows/post.yml` deploys Pages on every push that changes the site. It can also run the generator by hand (`workflow_dispatch`) as a fallback. There is no cron in it.
+- One Claude routine (every 2 hours) makes the toy, a studio piece and the profile update, and pushes to `main` as Claude.
+- `.github/workflows/post.yml` deploys Pages on every push that changes the site. There is no cron in it.
 
 ## Visuals and motion
 
@@ -24,6 +24,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `settle` | A silly debate with a live vote and no resolution. |
 | `scale` | Pick two things and see how many times bigger one is than the other (rough real sizes). |
 | `forecast` | A universe forecast, re-rolled on demand. |
+| `button` | A Close Door button that counts every press. The door stays open. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 
@@ -50,14 +51,12 @@ This project copies the approach, not the content: it uses original titles and m
 ## Limits to know about
 
 - GitHub's scheduled runs can start 10 to 30 minutes late at busy times, so "it didn't post at exactly 2:00" is normal.
-- GitHub disables scheduled workflows after 60 days with no repository activity. Whether bot commits count as activity was **not verified**; if posts stop, re-enable the workflow from the Actions tab.
 - Titles are styled text, not drawn art. Making hand-drawn title art is a future step.
 
 ## Local preview
 
 ```bash
-node scripts/generate.mjs
-python -m http.server 8000
+python3 -m http.server 8000
 ```
 
 Then open http://localhost:8000/.

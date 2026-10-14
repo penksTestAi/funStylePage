@@ -8,9 +8,9 @@ Last updated: 2026-10-14
 - `index.html` landing grid; reads `experiments.json`.
 - Two posts generated locally: `experiments/spend-0001`, `experiments/days-0002`. Landing and one experiment checked in the browser, no console errors.
 - `.github/workflows/post.yml`: deploys Pages on push to `main` (site paths); manual dispatch also runs the generator.
-- Claude routine `funStylePage` (trigger `trig_01R2qUkcTzG93pSDNL17YF1Y`): ENABLED, every 2 hours at :49 UTC. The Claude GitHub App was installed on funStylePage, and the first push from the routine landed (4176f8d). The Actions cron was removed again so there is one poster.
-- Repo renamed to `penksTestAi/funStylePage` (was `neal-fun-style`). Pages: https://penkstestai.github.io/funStylePage/
-- Pushed to `main` on funStylePage. Routine posts and the Pages deploy run from there.
+- Claude routine `toys` (trigger `trig_01R2qUkcTzG93pSDNL17YF1Y`): ENABLED, every 2 hours at :49 UTC. The Claude GitHub App was installed on toys, and the first push from the routine landed (4176f8d). The Actions cron was removed again so there is one poster.
+- Repo renamed to `vigilstudio/toys` (was `neal-fun-style`). Pages: https://vigilstudio.github.io/toys/
+- Pushed to `main` on toys. Routine posts and the Pages deploy run from there.
 - Added original SVG illustrations per type, CSS motion, and confetti on button presses (mid-task request: more visuals and life, inspired by neal.fun but no copied ideas).
 - Older posts (spend-0001, days-0002, dilemma-0003, and the first routine post) predate the illustrations, so their landing cards show an empty thumbnail until replaced.
 - `README.md` with design notes and limits.

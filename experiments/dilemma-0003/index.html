@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Absurd Trolley Problem · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --soft: #e7e7e7; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --soft: #262626; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --soft: #262626; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: #fff; border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+</style>
+</head>
+<body>
+<main>
+<h1>Absurd Trolley Problem</h1><p class="blurb">A trolley, a lever, and a choice nobody asked for.</p>
+<div class="card">A runaway trolley is heading toward <strong id="track">a parade of mildly confused accountants</strong>.<br>
+The lever would divert it toward <strong id="side">a bakery on wheels</strong>.</div>
+<div class="row"><button id="pull">Pull the lever</button><button class="ghost" id="hold">Do nothing</button></div>
+<p id="result"></p>
+<button class="ghost" id="next">New dilemma</button>
+<a class="back" href="../../">← all games and stuff</a>
+</main>
+<script>
+      const consequences = ["Everyone involved agrees this was the correct vibe.","The pigeons form a committee. It is very dramatic.","Nobody gets hurt. The piano is a little out of tune.","The accountants receive a 4% tax refund and a fresh sense of purpose.","History will remember you as the person who chose the chair."];
+      const scenarios = ["five very polite pigeons","a parade of mildly confused accountants","the last functioning fax machine","a convoy of rubber ducks"];
+      const sides = ["a grand piano","a bakery on wheels","your favourite chair","an unsupervised toddler on a skateboard"];
+      const pickOf = a => a[Math.floor(Math.random() * a.length)];
+      const deal = () => {
+        document.getElementById("track").textContent = pickOf(scenarios);
+        document.getElementById("side").textContent = pickOf(sides);
+        document.getElementById("result").textContent = "";
+      };
+      document.getElementById("pull").onclick = () => document.getElementById("result").textContent = pickOf(consequences);
+      document.getElementById("hold").onclick = () => document.getElementById("result").textContent = "You did nothing. The trolley is still going. Nothing is fine.";
+      document.getElementById("next").onclick = deal;
+      deal();</script>
+</body>
+</html>

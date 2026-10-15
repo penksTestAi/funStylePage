@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tip 27 · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .wall { fill: var(--wall); }
+  .hero .panel { fill: var(--panel); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+  .twitch-l { animation: twitch-l 3.2s ease-in-out infinite; }
+  .twitch-r { animation: twitch-r 3.2s ease-in-out infinite; }
+  .twitch-l, .twitch-r { transform-box: fill-box; }
+  @keyframes twitch-l { 0%, 70%, 100% { transform: translateX(0); } 76% { transform: translateX(5px); } 82% { transform: translateX(1px); } 88% { transform: translateX(4px); } }
+  @keyframes twitch-r { 0%, 70%, 100% { transform: translateX(0); } 76% { transform: translateX(-5px); } 82% { transform: translateX(-1px); } 88% { transform: translateX(-4px); } }
+
+  .door { --gap: 38%; position: relative; display: flex; height: 120px; margin: 16px auto; max-width: 320px; overflow: hidden; border-radius: 6px; background: var(--soft); border: 2px solid var(--ink); }
+  .door i { position: absolute; top: 0; bottom: 0; width: 50%; background: var(--panel); transition: transform .5s ease-in-out; }
+  .door i:first-child { left: 0; border-right: 2px solid var(--ink); transform: translateX(calc(-1 * var(--gap))); }
+  .door i:last-child { right: 0; border-left: 2px solid var(--ink); transform: translateX(var(--gap)); }
+  .door.ajar { --gap: 1%; }
+  .door.ajar i { transition-duration: .9s; }
+  .count { font-size: 1.1rem; font-variant-numeric: tabular-nums; margin: 8px 0; opacity: .75; }
+  #press { font-size: 1.5rem; font-weight: 700; padding: 18px 28px; border-radius: 999px; margin: 8px 0; }
+  #press:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .msg { min-height: 3.2em; margin: 12px 0; font-size: 1.1rem; }
+  @media (prefers-reduced-motion: reduce) { .door i, .door.ajar i { transition: none !important; } }
+
+  .tablet { background: var(--panel); border: 3px solid var(--ink); border-radius: 18px; padding: 20px 16px 24px; margin: 16px auto; max-width: 440px; }
+  .tablet .screen { background: var(--paper); border-radius: 8px; padding: 16px 12px; }
+  .bill { font-size: 1.1rem; margin: 0; opacity: .8; }
+  .ask { font-size: 1.3rem; font-weight: 700; margin: 6px 0 12px; }
+  .tips { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+  .tips button { margin: 0; padding: 14px 8px; font-size: 1.4rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; }
+  .tips button small { font-size: .8rem; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .tips button.new { animation: flash .6s ease-out; }
+  @keyframes flash { from { outline: 3px solid var(--ink); } to { outline: 3px solid transparent; } }
+  .small-row { margin-top: 14px; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  input[type=number] { font: inherit; width: 5em; padding: 8px; border: 2px solid var(--ink); border-radius: 6px; background: var(--paper); color: var(--ink); }
+  .tape { font-variant-numeric: tabular-nums; text-align: left; max-width: 280px; margin: 12px auto; padding: 12px 16px; background: var(--soft); border-radius: 4px; }
+  .tape div { display: flex; justify-content: space-between; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A tablet showing three tip buttons, with a small arrow above them bobbing upwards">
+    <rect x="40" y="26" width="120" height="84" rx="10" fill="#b9c2cf" stroke="currentColor" stroke-width="2.5"/>
+    <rect x="48" y="34" width="104" height="68" rx="4" style="fill: var(--paper, #fff)" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="54" y="68" width="28" height="26" rx="4" fill="#1a6ef0"/>
+    <rect x="86" y="68" width="28" height="26" rx="4" fill="#1a6ef0"/>
+    <g class="pulse"><rect x="118" y="68" width="28" height="26" rx="4" fill="#ffb020" stroke="currentColor" stroke-width="2"/></g>
+    <path d="M60 42 h60 M60 54 h36" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    <g class="bob"><path d="M164 22 l-9 12 h6 v12 h6 v-12 h6 z" fill="#2bb673" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></g>
+  </svg></div>
+<h1>Tip 27</h1><p class="blurb">Suggested, warmly.</p>
+<div class="tablet" id="tablet">
+ <div class="screen">
+  <div id="ask">
+   <p class="bill">Flat white, oat. <span id="bill"></span></p>
+   <p class="ask">Add a tip?</p>
+   <div class="tips" id="tips"></div>
+   <div class="row small-row">
+    <button type="button" class="ghost" id="custom">Custom</button>
+    <button type="button" class="ghost" id="none">No tip</button>
+   </div>
+   <form id="cform" class="row small-row" hidden>
+    <label for="cin">Tip %</label>
+    <input id="cin" type="number" min="0" max="500" step="1" value="0" inputmode="numeric">
+    <button type="submit">Confirm</button>
+   </form>
+   <p class="count" id="count" aria-live="off"></p>
+  </div>
+  <div id="done" hidden>
+   <p class="ask" id="thanks"></p>
+   <div class="tape" id="tape"></div>
+   <p id="after"></p>
+   <button type="button" id="again">Next customer</button>
+  </div>
+ </div>
+</div>
+<div class="msg" id="msg" role="status" aria-live="polite"></div>
+<a class="back" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled || calm()) return;
+    // Keyboard activation has no pointer position (detail 0), so burst from the button's centre instead.
+    const r = b.getBoundingClientRect();
+    const x = e.detail ? e.clientX : r.left + r.width / 2;
+    const y = e.detail ? e.clientY : r.top + r.height / 2;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  });
+
+  
+  const BILL = 4.80;
+  const $ = (id) => document.getElementById(id);
+  const money = (v) => "$" + v.toFixed(2);
+  let creep = 0, finished = false, armed = false, timer = null, shown = [];
+  const msgs = [[3, "Prices have not changed. Only the suggestions."], [8, "The tablet has been told this is normal."], [15, "Staff are not watching you. The tablet is."], [25, "Your barista says it is up to you."], [40, "Suggested amounts are based on how you look."]];
+
+  function options() {
+    const base = Math.min(18 + creep, 150);
+    const list = [base, base + 2, base + 7];
+    for (let k = 1; k <= Math.floor(creep / 6); k++) list.push(base + 7 + 5 * k);
+    return list.slice(0, 6);
+  }
+  function render() {
+    const list = options(), box = $("tips");
+    // Hold still while a tip has focus: the number you read is the number you pay.
+    if (box.contains(document.activeElement)) return;
+    while (box.children.length < list.length) {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "new";
+      b.addEventListener("click", () => pick(parseInt(b.dataset.p, 10)));
+      b.addEventListener("animationend", () => b.classList.remove("new"));
+      box.appendChild(b);
+    }
+    list.forEach((p, i) => {
+      const b = box.children[i];
+      b.dataset.p = p;
+      b.innerHTML = p + "%<small>" + money(BILL * p / 100) + "</small>";
+      b.setAttribute("aria-label", "Tip " + p + " percent, " + money(BILL * p / 100));
+    });
+    $("count").textContent = "Suggested today: " + list[0] + "%";
+  }
+  function tick() {
+    if (finished) return;
+    creep++;
+    render();
+    if (msgs.some((m) => m[0] === creep)) $("msg").textContent = msgs.find((m) => m[0] === creep)[1];
+  }
+  function finish(p) {
+    finished = true;
+    clearInterval(timer);
+    const tip = BILL * p / 100;
+    $("ask").hidden = true; $("done").hidden = false;
+    $("thanks").textContent = p === 0 ? "No tip. That is fine." : "Thank you for the " + p + "%.";
+    $("tape").innerHTML = "<div><span>Flat white</span><span>" + money(BILL) + "</span></div><div><span>Tip (" + p + "%)</span><span>" + money(tip) + "</span></div><div><strong>Total</strong><strong>" + money(BILL + tip) + "</strong></div>";
+    const next = options()[0];
+    $("after").textContent = p === 0 ? "The tablet now suggests " + next + "% to the next person, to be safe." : "The tablet has noted what worked. Next person: " + next + "% and up.";
+    $("msg").textContent = "";
+    $("again").focus();
+  }
+  function pick(p) { finish(p); }
+  $("none").onclick = () => {
+    if (!armed) {
+      armed = true;
+      $("none").textContent = "Really? Press again";
+      $("msg").textContent = "A tip is not required. The tablet is only asking.";
+      return;
+    }
+    finish(0);
+  };
+  $("custom").onclick = () => {
+    $("cform").hidden = false;
+    $("cin").focus();
+    $("cin").select();
+    $("msg").textContent = "Any number you like. The tablet will not suggest it.";
+  };
+  $("cform").onsubmit = (e) => {
+    e.preventDefault();
+    const v = Math.max(0, Math.min(500, Math.round(Number($("cin").value) || 0)));
+    finish(v);
+  };
+  $("again").onclick = () => {
+    finished = false; armed = false; // creep stays: the tablet remembers today
+
+    $("none").textContent = "No tip";
+    $("cform").hidden = true; $("cin").value = 0;
+    $("ask").hidden = false; $("done").hidden = true;
+    $("tips").innerHTML = "";
+    render();
+    $("msg").textContent = "";
+    timer = setInterval(tick, 1600);
+    $("tips").children[0].focus();
+  };
+  $("bill").textContent = money(BILL);
+  render();
+  timer = setInterval(tick, 1600);
+</script>
+</body>
+</html>

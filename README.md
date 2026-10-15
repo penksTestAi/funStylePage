@@ -43,6 +43,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `thermostat` | An office thermostat with a dial that turns nicely and changes nothing. Try both ends and Facilities leaves a button. Mouse (drag) or keyboard (arrows, Home, End). |
 | `rating` | A five-star review widget that argues back. Your stars are weighted against 1,204 other reviewers and drift to a tenth of what you meant; rate three times and Post review appears. Mouse or keyboard (arrows, Enter). |
 | `autocorrect` | A text box that corrects your words into slightly worse ones, each with a confident "Did you mean...?" chip. Undoing a word is possible but takes presses, and each one you win makes the next cost more (up to 6). Send always works. Type or paste; mouse or keyboard (Tab to the chips, Enter). Nothing typed is sent or kept. |
+| `tip` | A tablet tipping screen. The suggested percentages (18, 20, 25) creep up every second and new buttons appear. Pick any, type your own, or press No tip twice. Mouse or keyboard. Nothing typed is sent or kept. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 

@@ -37,6 +37,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `password` | A sign-up box whose password rules keep growing and contradicting each other. An appeal withdraws the older rule, and it can always be finished. Mouse or keyboard. |
 | `captcha` | A "prove you are a person" check whose steps get stranger: a sadder checkbox, feeling tiles, a wobbly word, a feeling that must not be round. It can always be finished. Mouse or keyboard. Nothing typed is sent or kept. |
 | `domino` | A row of dominoes you set up on a floor (click, drag or arrow keys and Enter). Tip the first one; it falls as far as the gaps allow, and a long enough chain rings the bell at the end. Mouse or keyboard. |
+| `elevator` | A lift panel. The Close door button only half-listens (the third press counts), floors you skip may still stop it, and the top floor can always be reached. Mouse or keyboard. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 

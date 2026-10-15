@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lift 21 · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --good: #1b7d4c; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --good: #5fd39a; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --good: #5fd39a; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  a.backlink { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .spin, .roll, .pulse { transform-box: fill-box; transform-origin: center; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  .slide { animation: slide 2.6s ease-in-out infinite alternate; transform-box: fill-box; }
+  .slide.r { animation-name: slider; }
+  .blink { animation: blink 1.4s steps(2, jump-none) infinite; }
+  @keyframes slide { to { transform: translateX(-9px); } }
+  @keyframes slider { to { transform: translateX(9px); } }
+  @keyframes blink { 50% { fill: var(--paper); } }
+  .lift { display: flex; gap: 16px; justify-content: center; align-items: stretch; flex-wrap: wrap; margin: 16px auto; max-width: 520px; }
+  .car { flex: 1 1 220px; background: var(--soft); border-radius: 8px; padding: 12px; }
+  .disp { font: 700 2.4rem/1 ui-monospace, Menlo, Consolas, monospace; background: #111; color: #ff9a2e; border-radius: 6px; padding: 8px 0; margin: 0 0 10px; letter-spacing: .1em; }
+  .doors { position: relative; height: 120px; overflow: hidden; border: 2.5px solid var(--ink); border-radius: 4px; background: var(--paper); }
+  .dr { position: absolute; top: 0; bottom: 0; width: 50%; background: #ffb020; border-right: 2.5px solid var(--ink); transition: transform .7s ease-in-out; }
+  .dr.r { right: 0; left: auto; background: var(--paper); border-right: 0; border-left: 2.5px solid var(--ink); }
+  .dr.l { left: 0; }
+  .open .dr.l { transform: translateX(-92%); }
+  .open .dr.r { transform: translateX(92%); }
+  .moving .doors { box-shadow: inset 0 0 0 100px color-mix(in srgb, var(--ink) 8%, transparent); }
+  .panel { flex: 0 1 200px; background: var(--soft); border-radius: 8px; padding: 12px; }
+  .keys { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .keys button { margin: 0; border-radius: 999px; height: 52px; font-weight: 700; font-size: 1.1rem; background: var(--paper); color: var(--ink); border: 2.5px solid var(--ink); }
+  .keys button.lit { background: #ffb020; color: #111; }
+  .keys button.here { outline: 3px dotted var(--ink); outline-offset: 2px; }
+  .keys button.close { grid-column: 1 / -1; border-radius: 10px; font-size: 1rem; }
+  button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .status { min-height: 3em; margin: 12px 0 4px; }
+  .status.done { color: var(--good); font-weight: 700; }
+  button:disabled { opacity: .45; cursor: default; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (prefers-reduced-motion: reduce) { .dr { transition: none; } }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero" id="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A lift door standing slightly open, with a small panel of round buttons beside it">
+    <rect x="30" y="14" width="100" height="94" rx="3" fill="none" stroke="currentColor" stroke-width="2.5"/>
+    <rect class="slide" x="34" y="18" width="46" height="86" fill="#ffb020" stroke="currentColor" stroke-width="2.5"/>
+    <rect class="slide r" x="80" y="18" width="46" height="86" fill="var(--paper)" stroke="currentColor" stroke-width="2.5"/>
+    <path d="M58 6 L72 6 L65 12 Z" fill="currentColor"/>
+    <rect x="146" y="30" width="30" height="62" rx="5" fill="var(--paper)" stroke="currentColor" stroke-width="2.5"/>
+    <circle cx="161" cy="44" r="5" fill="#ff5c8a" stroke="currentColor" stroke-width="2" class="blink"/>
+    <circle cx="161" cy="60" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+    <circle cx="161" cy="76" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+  </svg></div>
+<h1>Lift 21</h1><p class="blurb">Press a floor. Press close door. Wait.</p>
+<section class="lift" id="lift" aria-label="A lift">
+  <div class="car" id="car"><div class="disp" id="disp" aria-hidden="true">G</div><div class="doors"><div class="dr l"></div><div class="dr r"></div></div></div>
+  <div class="panel"><div class="keys" id="keys" role="group" aria-label="Lift panel"></div></div>
+</section>
+<p class="status" id="status"></p>
+<div class="row"><button type="button" id="again" class="ghost" hidden>Go back down</button></div>
+<div class="sr" id="live" role="status" aria-live="polite"></div>
+<a class="backlink" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function burst(x, y, n) {
+    if (calm()) return;
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    burst(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2, 14);
+  });
+
+  const FL = ["G", "1", "2", "3", "5", "6"], SNAG = 3, TOP = FL.length - 1, AUTO = 5000, STEP = 900, NEEDED = 3;
+  const lift = document.getElementById("lift"), disp = document.getElementById("disp"), keys = document.getElementById("keys");
+  const status = document.getElementById("status"), live = document.getElementById("live"), again = document.getElementById("again");
+  let at = 0, open = true, moving = false, lit = new Set(), presses = 0, snagged = false, over = false, timer = 0;
+  const btn = [];
+  function say(s, done) { status.textContent = s; live.textContent = s; status.classList.toggle("done", !!done); }
+  FL.slice().reverse().forEach((l) => {
+    const i = FL.indexOf(l), b = document.createElement("button");
+    b.type = "button"; b.textContent = l; b.setAttribute("aria-label", l === "G" ? "Ground floor" : "Floor " + l);
+    b.addEventListener("click", () => floor(i)); keys.appendChild(b); btn[i] = b;
+  });
+  const cb = document.createElement("button");
+  cb.type = "button"; cb.className = "close"; cb.textContent = "Close door"; cb.addEventListener("click", closeBtn); keys.appendChild(cb);
+  function render() {
+    disp.textContent = FL[at];
+    lift.classList.toggle("open", open); lift.classList.toggle("moving", moving);
+    btn.forEach((b, i) => { b.classList.toggle("lit", lit.has(i)); b.classList.toggle("here", i === at); b.setAttribute("aria-pressed", lit.has(i) ? "true" : "false"); if (i === at) b.setAttribute("aria-current", "location"); else b.removeAttribute("aria-current"); b.disabled = over; });
+    cb.disabled = over; again.hidden = !over;
+  }
+  function floor(i) {
+    if (over) return;
+    if (i === at) { say(open ? "You are already here. The door is open to prove it." : "You are here."); return; }
+    if (lit.has(i)) { lit.delete(i); say("Floor " + FL[i] + " has been forgotten."); }
+    else { lit.add(i); say("Floor " + FL[i] + " is lit. The lift has noted it."); }
+    render(); if (open) arm();
+  }
+  function arm() { clearTimeout(timer); if (lit.size) timer = setTimeout(shut, AUTO); }
+  function openDoor(msg, done) { open = true; moving = false; presses = 0; render(); say(msg, done); if (!done) arm(); }
+  function closeBtn() {
+    if (over) return;
+    if (!open) { say(moving ? "It is moving. The button is decorative now." : "The door is already closed. This does not count."); return; }
+    if (!lit.size) { say("Close it for what? Press a floor first."); return; }
+    presses++;
+    if (presses < NEEDED) { arm(); say(presses === 1 ? "The door has heard you. It will think." : "Still thinking. " + (NEEDED - presses) + " more to be taken seriously."); }
+    else shut();
+  }
+  function shut() {
+    clearTimeout(timer);
+    if (!open || !lit.size) return;
+    open = false; render(); say("Closing.");
+    timer = setTimeout(run, 800);
+  }
+  function run() {
+    // Every lit floor was forgotten on the way. Stop where we are and open, or the lift waits forever.
+    if (!lit.size) { openDoor("Nowhere left to go. The door opens."); return; }
+    moving = true;
+    let t = [...lit].sort((a, b) => Math.abs(a - at) - Math.abs(b - at))[0];
+    const up = t > at;
+    at += up ? 1 : -1; render();
+    say("Floor " + FL[at] + ", going " + (up ? "up" : "down") + ".");
+    if (lit.has(at)) {
+      lit.delete(at);
+      if (at === TOP) { over = true; render(); openDoor("Floor " + FL[at] + ". The door opens at once. Nobody asked it to.", true); end(); return; }
+      openDoor("Floor " + FL[at] + ". The door opens on an empty corridor."); return;
+    }
+    if (at === SNAG && !snagged) { snagged = true; openDoor("Floor " + FL[at] + ". Somebody was waiting. They get in, look at you, and press nothing."); return; }
+    timer = setTimeout(run, STEP);
+  }
+  function end() {
+    const r = lift.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 3, 28);
+    again.hidden = false; again.focus(); // the floor buttons are disabled now; keep keyboard focus on a live control
+  }
+  again.addEventListener("click", () => { clearTimeout(timer); at = 0; open = true; moving = false; lit.clear(); presses = 0; snagged = false; over = false; say("Ground floor. The door is open, as before."); render(); btn[TOP].focus(); });
+  say("Ground floor. The door is open. It has been for a while.");
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unsubscribe · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .wall { fill: var(--wall); }
+  .hero .panel { fill: var(--panel); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+  .twitch-l { animation: twitch-l 3.2s ease-in-out infinite; }
+  .twitch-r { animation: twitch-r 3.2s ease-in-out infinite; }
+  .twitch-l, .twitch-r { transform-box: fill-box; }
+  @keyframes twitch-l { 0%, 70%, 100% { transform: translateX(0); } 76% { transform: translateX(5px); } 82% { transform: translateX(1px); } 88% { transform: translateX(4px); } }
+  @keyframes twitch-r { 0%, 70%, 100% { transform: translateX(0); } 76% { transform: translateX(-5px); } 82% { transform: translateX(-1px); } 88% { transform: translateX(-4px); } }
+
+  .door { --gap: 38%; position: relative; display: flex; height: 120px; margin: 16px auto; max-width: 320px; overflow: hidden; border-radius: 6px; background: var(--soft); border: 2px solid var(--ink); }
+  .door i { position: absolute; top: 0; bottom: 0; width: 50%; background: var(--panel); transition: transform .5s ease-in-out; }
+  .door i:first-child { left: 0; border-right: 2px solid var(--ink); transform: translateX(calc(-1 * var(--gap))); }
+  .door i:last-child { right: 0; border-left: 2px solid var(--ink); transform: translateX(var(--gap)); }
+  .door.ajar { --gap: 1%; }
+  .door.ajar i { transition-duration: .9s; }
+  .count { font-size: 1.1rem; font-variant-numeric: tabular-nums; margin: 8px 0; opacity: .75; }
+  #press { font-size: 1.5rem; font-weight: 700; padding: 18px 28px; border-radius: 999px; margin: 8px 0; }
+  #press:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .msg { min-height: 3.2em; margin: 12px 0; font-size: 1.1rem; }
+  @media (prefers-reduced-motion: reduce) { .door i, .door.ajar i { transition: none !important; } }
+
+  .mail { background: var(--soft); border: 3px solid var(--ink); border-radius: 12px; padding: 16px; margin: 16px auto; max-width: 440px; text-align: left; }
+  .mail h2 { font-size: 1.2rem; margin: 0 0 4px; }
+  .mail p { margin: 4px 0 12px; }
+  .lists { list-style: none; margin: 12px 0 0; padding: 0; }
+  .lists li { display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-top: 1px solid var(--ink); opacity: .85; font-size: .95rem; }
+  .lists li s { opacity: .7; }
+  .lists li.fresh { animation: flash .6s ease-out; }
+  .tally { font-size: 1.1rem; font-variant-numeric: tabular-nums; margin: 8px 0; }
+  @keyframes flash { from { background: var(--accent); } to { background: transparent; } }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="An envelope with a small unsubscribe link, and more envelopes peeking out from behind it">
+    <g class="wobble"><rect x="52" y="30" width="96" height="62" rx="6" fill="#b9c2cf" stroke="currentColor" stroke-width="2"/></g>
+    <g class="bob d2"><rect x="44" y="24" width="96" height="62" rx="6" fill="#ffb020" stroke="currentColor" stroke-width="2"/></g>
+    <g class="bob"><rect x="36" y="38" width="108" height="66" rx="6" style="fill: var(--paper, #fff)" stroke="currentColor" stroke-width="2.5"/>
+    <path d="M38 41 L90 76 L142 41" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M62 94 h56" stroke="#1a6ef0" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="3 3"/></g>
+    <g class="pulse"><circle cx="156" cy="40" r="11" fill="#ff5c8a" stroke="currentColor" stroke-width="2"/><text x="156" y="45" text-anchor="middle" font-size="14" font-weight="700" fill="#111" font-family="sans-serif">1</text></g>
+  </svg></div>
+<h1>Unsubscribe</h1><p class="blurb">One click. We promise.</p>
+<div class="mail" id="mail">
+ <h2 id="head" tabindex="-1"></h2>
+ <p id="sub"></p>
+ <div class="row">
+  <button type="button" id="go">Unsubscribe</button>
+  <button type="button" class="ghost" id="keep">Keep me subscribed</button>
+ </div>
+ <p class="tally" id="tally" aria-live="off"></p>
+ <ul class="lists" id="lists"></ul>
+</div>
+<div class="msg" id="msg" role="status" aria-live="polite"></div>
+<a class="back" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled || calm()) return;
+    // Keyboard activation has no pointer position (detail 0), so burst from the button's centre instead.
+    const r = b.getBoundingClientRect();
+    const x = e.detail ? e.clientX : r.left + r.width / 2;
+    const y = e.detail ? e.clientY : r.top + r.height / 2;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  });
+
+
+  const $ = (id) => document.getElementById(id);
+  const LISTS = [
+    ["Weekly Digest", "every Monday"],
+    ["Offers You May Like", "twice a week"],
+    ["Product Updates", "when there is a product"],
+    ["Partner Offers (Partners)", "partners are not named"],
+    ["Offers From Partners Of Our Partners", "daily"],
+    ["Tips For Reading Our Tips", "monthly"],
+    ["Important Changes To Your Email Preferences", "whenever you change them"],
+    ["Survey: How Was Unsubscribing?", "one question, forever"],
+    ["Things You Did Not Sign Up For (Archive)", "since 2014"],
+    ["Confirmation That You Have Unsubscribed", "sent once per list"]
+  ];
+  const notes = ["Done. Removing you from one list.", "Removed. Preferences saved.", "Gone. Mostly.", "Removed, pending a review.", "That one was easy.", "Removed from that one as well.", "Noted. Fine.", "Done. You asked twice.", "Almost there."];
+  let done = 0, ended = false;
+  const left = () => LISTS.length - done;
+  function show() {
+    if (ended) return;
+    const [name, freq] = LISTS[done];
+    $("head").textContent = done === 0 ? "You are on 1 list." : "We found another list.";
+    $("sub").textContent = done === 0 ? "Weekly Digest. Sent every Monday." : "It was under a different name: " + name + ", " + freq + ".";
+    $("tally").textContent = "Lists you are on: " + (done === 0 ? 1 : left());
+    if (done === LISTS.length - 1) $("tally").textContent = "Lists you are on: 1 (the last one)";
+  }
+  function addRow(i) {
+    const li = document.createElement("li");
+    li.className = "fresh";
+    li.innerHTML = "<s></s><span></span>";
+    li.firstChild.textContent = LISTS[i][0];
+    li.lastChild.textContent = "removed";
+    li.addEventListener("animationend", () => li.classList.remove("fresh"));
+    $("lists").appendChild(li);
+  }
+  $("keep").onclick = () => { const k = done === 0 ? 1 : left(); $("msg").textContent = ended ? "You are already off every list." : "Noted. You are still on " + k + (k === 1 ? " list." : " lists."); };
+  $("go").onclick = () => {
+    if (ended) return;
+    addRow(done);
+    done++;
+    if (done === LISTS.length) {
+      ended = true;
+      $("head").textContent = "You are unsubscribed from everything.";
+      $("sub").textContent = LISTS.length + " lists, all removed. This is the last email we will send you. We will send it now.";
+      $("tally").textContent = "Lists you are on: 0";
+      $("go").disabled = true; $("keep").disabled = true;
+      $("msg").textContent = "Sorry to see you go. (Delivered.)";
+      $("head").focus(); // the button just disabled itself; keep keyboard users somewhere
+      return;
+    }
+    $("msg").textContent = notes[(done - 1) % notes.length];
+    show();
+  };
+  show();
+</script>
+</body>
+</html>

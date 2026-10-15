@@ -41,6 +41,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `volume` | A volume control that is a marble on a plank. Tilt the plank (arrow keys, buttons or drag) and the marble rolls to a notch; give a neighbour the volume they ask for, three times. Biscuits help. Silent. Mouse or keyboard. |
 | `stamp` | A loyalty card. Every stamp you collect moves the free-coffee line, sometimes further, sometimes closer, and it can always be reached. Click or arrow keys and Enter. Mouse or keyboard. |
 | `thermostat` | An office thermostat with a dial that turns nicely and changes nothing. Try both ends and Facilities leaves a button. Mouse (drag) or keyboard (arrows, Home, End). |
+| `rating` | A five-star review widget that argues back. Your stars are weighted against 1,204 other reviewers and drift to a tenth of what you meant; rate three times and Post review appears. Mouse or keyboard (arrows, Enter). |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 

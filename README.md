@@ -39,6 +39,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `domino` | A row of dominoes you set up on a floor (click, drag or arrow keys and Enter). Tip the first one; it falls as far as the gaps allow, and a long enough chain rings the bell at the end. Mouse or keyboard. |
 | `elevator` | A lift panel. The Close door button only half-listens (the third press counts), floors you skip may still stop it, and the top floor can always be reached. Mouse or keyboard. |
 | `volume` | A volume control that is a marble on a plank. Tilt the plank (arrow keys, buttons or drag) and the marble rolls to a notch; give a neighbour the volume they ask for, three times. Biscuits help. Silent. Mouse or keyboard. |
+| `stamp` | A loyalty card. Every stamp you collect moves the free-coffee line, sometimes further, sometimes closer, and it can always be reached. Click or arrow keys and Enter. Mouse or keyboard. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 

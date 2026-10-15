@@ -1,5 +1,13 @@
 [
   {
+    "slug": "stamp-0023",
+    "type": "stamp",
+    "title": "Stamp 23",
+    "blurb": "Ten stamps for a free coffee. Probably.",
+    "date": "2026-10-15T10:21:13.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A loyalty card with a few round stamps, a rubber stamp coming down on it, and a steaming coffee cup\">\n    <rect x=\"14\" y=\"26\" width=\"112\" height=\"74\" rx=\"8\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <circle cx=\"36\" cy=\"50\" r=\"8\" fill=\"#ff5c8a\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <circle cx=\"62\" cy=\"50\" r=\"8\" fill=\"#ff5c8a\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <circle cx=\"88\" cy=\"50\" r=\"8\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"2\" stroke-dasharray=\"3 3\"/>\n    <circle cx=\"36\" cy=\"78\" r=\"8\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"2\" stroke-dasharray=\"3 3\"/>\n    <circle cx=\"62\" cy=\"78\" r=\"8\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"2\" stroke-dasharray=\"3 3\"/>\n    <circle cx=\"88\" cy=\"78\" r=\"8\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"2\" stroke-dasharray=\"3 3\"/>\n    <g class=\"thump\"><rect x=\"80\" y=\"14\" width=\"16\" height=\"9\" rx=\"2\" fill=\"#1a6ef0\" stroke=\"currentColor\" stroke-width=\"2\"/><rect x=\"85\" y=\"6\" width=\"6\" height=\"9\" rx=\"2\" fill=\"currentColor\"/></g>\n    <path d=\"M146 62 h34 v18 a14 14 0 0 1 -14 14 h-6 a14 14 0 0 1 -14 -14 Z\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <path d=\"M180 68 q12 2 0 14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <path class=\"steam\" d=\"M156 54 q-5 -7 0 -12 M168 54 q-5 -7 0 -12\" fill=\"none\" stroke=\"#1a6ef0\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n  </svg>"
+  },
+  {
     "slug": "volume-0022",
     "type": "volume",
     "title": "Volume 22",

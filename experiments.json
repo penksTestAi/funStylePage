@@ -1,5 +1,13 @@
 [
   {
+    "slug": "domino-0020",
+    "type": "domino",
+    "title": "Domino 20",
+    "blurb": "Set them up. Tip the first one.",
+    "date": "2026-10-15T06:21:52.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A row of dominoes, the first ones already leaning over, with a small bell at the far end\">\n    <path d=\"M14 104 H186\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n    <rect class=\"lean\" x=\"26\" y=\"58\" width=\"12\" height=\"46\" rx=\"2\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <rect class=\"lean d2\" x=\"54\" y=\"58\" width=\"12\" height=\"46\" rx=\"2\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <rect x=\"82\" y=\"58\" width=\"12\" height=\"46\" rx=\"2\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <rect x=\"110\" y=\"58\" width=\"12\" height=\"46\" rx=\"2\" fill=\"#ff5c8a\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <circle cx=\"88\" cy=\"72\" r=\"2.5\" fill=\"currentColor\"/><circle cx=\"88\" cy=\"90\" r=\"2.5\" fill=\"currentColor\"/><circle cx=\"116\" cy=\"72\" r=\"2.5\" fill=\"currentColor\"/><circle cx=\"116\" cy=\"90\" r=\"2.5\" fill=\"currentColor\"/>\n    <g class=\"wob\"><path d=\"M148 74 C148 56 172 56 172 74 V80 H148 Z\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><circle cx=\"160\" cy=\"86\" r=\"3\" fill=\"currentColor\"/></g>\n  </svg>"
+  },
+  {
     "slug": "captcha-0019",
     "type": "captcha",
     "title": "Prove it 19",

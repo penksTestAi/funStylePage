@@ -1,5 +1,13 @@
 [
   {
+    "slug": "thermostat-0024",
+    "type": "thermostat",
+    "title": "Thermostat 24",
+    "blurb": "The dial works perfectly. The office stays 21.",
+    "date": "2026-10-15T12:22:31.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A wall thermostat with a dial and a small display, and a sticky note beside it\">\n    <rect x=\"62\" y=\"10\" width=\"76\" height=\"100\" rx=\"10\" fill=\"#e7e7e7\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <rect x=\"76\" y=\"20\" width=\"48\" height=\"18\" rx=\"3\" fill=\"#2bb673\" stroke=\"currentColor\" stroke-width=\"2\"/>\n    <circle cx=\"100\" cy=\"74\" r=\"24\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <g class=\"spin\"><line x1=\"100\" y1=\"74\" x2=\"100\" y2=\"54\" stroke=\"#ff5c8a\" stroke-width=\"4\" stroke-linecap=\"round\"/></g>\n    <rect x=\"150\" y=\"30\" width=\"34\" height=\"30\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2\" class=\"flap\"/>\n    <path d=\"M156 42 h22 M156 50 h14\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <path class=\"steam\" d=\"M30 80 q-6 -8 0 -14 M42 80 q-6 -8 0 -14\" fill=\"none\" stroke=\"#1a6ef0\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n  </svg>"
+  },
+  {
     "slug": "stamp-0023",
     "type": "stamp",
     "title": "Stamp 23",

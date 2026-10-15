@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Undo 17 · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --good: #1b7d4c; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --good: #5fd39a; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --good: #5fd39a; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  a.backlink { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .spin, .roll, .pulse { transform-box: fill-box; transform-origin: center; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  .fade { animation: fade 3.4s ease-in-out infinite alternate; }
+  .back { animation: back 2.2s ease-in-out infinite alternate; }
+  .fade, .back { transform-box: fill-box; transform-origin: center; }
+  @keyframes fade { to { opacity: .35; } }
+  @keyframes back { to { transform: translateX(-6px); } }
+  .stage { max-width: 500px; margin: 16px auto; }
+  #cv { width: 100%; height: auto; cursor: crosshair; display: block; }
+  #cv:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .status { min-height: 1.5em; margin: 12px 0 4px; }
+  .status.done { color: var(--good); font-weight: 700; }
+  .hist { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; font-size: .8rem; }
+  .hist li { background: var(--soft); border-radius: 4px; padding: 2px 8px; opacity: .55; }
+  .hist li.on { opacity: 1; }
+  .hist li.now { outline: 2px solid var(--accent); }
+  .hist li.gone { text-decoration: line-through; opacity: .65; }
+  button:disabled { opacity: .45; cursor: default; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero" id="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A small sheet of paper with three dots, a curved arrow going back, and a tree standing where the paper used to be">
+    <path d="M20 100 H180" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <g class="fade"><rect x="22" y="36" width="12" height="64" rx="2" fill="#a06a3a" stroke="currentColor" stroke-width="2"/><circle cx="28" cy="30" r="20" fill="#2bb673" stroke="currentColor" stroke-width="2"/></g>
+    <rect x="66" y="14" width="104" height="86" rx="4" fill="var(--paper)" stroke="currentColor" stroke-width="2.5"/>
+    <path d="M78 40 H158 M78 56 H158 M78 72 H158" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".35"/>
+    <circle cx="92" cy="50" r="5" fill="#ff5c8a" stroke="currentColor" stroke-width="2"/><circle cx="122" cy="66" r="5" fill="#1a6ef0" stroke="currentColor" stroke-width="2"/><circle cx="148" cy="46" r="5" fill="#ffb020" stroke="currentColor" stroke-width="2"/>
+    <g class="back"><path d="M150 108 C120 122 80 118 52 90" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M50 100 L52 90 L62 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  </svg></div>
+<h1>Undo 17</h1><p class="blurb">Ctrl+Z goes back further than you did.</p>
+<section class="stage" aria-label="Canvas with an undo history">
+  <canvas id="cv" width="480" height="300" tabindex="0" role="img" aria-label="A canvas. Click or press Enter or Space to leave a dot. Arrow keys move the crosshair. Control Z undoes, Control Y redoes."></canvas>
+  <p class="status" id="status">Seven things have been done here.</p>
+  <div class="row"><button type="button" id="undo">Undo</button><button type="button" id="redo" class="ghost">Redo</button><button type="button" id="reset" class="ghost">Start over</button></div>
+  <ol class="hist" id="hist" aria-label="History, oldest first"></ol>
+</section>
+<div class="sr" id="live" role="status" aria-live="polite"></div>
+<a class="backlink" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function burst(x, y, n) {
+    if (calm()) return;
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    burst(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2, 14);
+  });
+
+  const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+  const status = document.getElementById("status"), live = document.getElementById("live"), histEl = document.getElementById("hist");
+  const undoB = document.getElementById("undo"), redoB = document.getElementById("redo"), resetB = document.getElementById("reset");
+  const W = cv.width, H = cv.height, MAXM = 9;
+  const BASE = ["the ground", "a seed", "a tree", "a sheet of paper", "ruled lines", "the title", "a coffee ring"];
+  let hist, pos, cur, done;
+
+  function fresh() {
+    hist = BASE.map((l, i) => ({ base: i + 1, label: l }));
+    pos = hist.length; cur = { x: W / 2, y: H / 2 }; done = false;
+    status.classList.remove("done"); say("Seven things have been done here. Leave a dot.");
+    render();
+  }
+  function say(s) { status.textContent = s; live.textContent = s; }
+  function ink() { return getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#111"; }
+  function paper() { return getComputedStyle(document.documentElement).getPropertyValue("--paper").trim() || "#fff"; }
+  function scene(nb, c) {
+    ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.lineWidth = 3; ctx.strokeStyle = c; ctx.fillStyle = c;
+    if (nb >= 1 && nb <= 3) {
+      ctx.beginPath(); ctx.moveTo(20, 250); ctx.lineTo(W - 20, 250); ctx.stroke();
+    }
+    if (nb === 2) { ctx.beginPath(); ctx.ellipse(W / 2, 244, 7, 4, 0, 0, 6.283); ctx.fill(); }
+    if (nb === 3) {
+      ctx.fillStyle = "#a06a3a"; ctx.fillRect(W / 2 - 10, 140, 20, 110); ctx.strokeRect(W / 2 - 10, 140, 20, 110);
+      ctx.fillStyle = "#2bb673";
+      [[0, 100, 55], [-40, 135, 38], [40, 135, 38]].forEach(([dx, dy, r]) => { ctx.beginPath(); ctx.arc(W / 2 + dx, dy, r, 0, 6.283); ctx.fill(); ctx.stroke(); });
+    }
+    if (nb >= 4) {
+      ctx.fillStyle = paper(); ctx.fillRect(60, 20, W - 120, H - 40); ctx.strokeRect(60, 20, W - 120, H - 40);
+    }
+    if (nb >= 5) {
+      ctx.lineWidth = 1; ctx.globalAlpha = .3;
+      for (let y = 80; y < H - 30; y += 24) { ctx.beginPath(); ctx.moveTo(72, y); ctx.lineTo(W - 72, y); ctx.stroke(); }
+      ctx.globalAlpha = 1;
+    }
+    if (nb >= 6) { ctx.fillStyle = c; ctx.font = "700 22px Roboto, system-ui, sans-serif"; ctx.textAlign = "left"; ctx.fillText("Untitled", 76, 56); }
+    if (nb >= 7) { ctx.strokeStyle = "#a06a3a"; ctx.lineWidth = 3; ctx.globalAlpha = .7; ctx.beginPath(); ctx.arc(330, 200, 24, 0.3, 5.6); ctx.stroke(); ctx.globalAlpha = 1; }
+  }
+  const COL = ["#ff5c8a", "#1a6ef0", "#ffb020", "#2bb673"];
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const c = ink(), live_ = hist.slice(0, pos);
+    let nb = 0, mi = 0;
+    live_.forEach((e) => { if (e.base) nb = e.base; });
+    scene(nb, c);
+    live_.forEach((e) => {
+      if (e.base) return;
+      ctx.fillStyle = COL[mi++ % 4]; ctx.strokeStyle = c; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(e.x, e.y, 7, 0, 6.283); ctx.fill(); ctx.stroke();
+    });
+    if (document.activeElement === cv) {
+      ctx.strokeStyle = "#ffb020"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(cur.x - 12, cur.y); ctx.lineTo(cur.x + 12, cur.y); ctx.moveTo(cur.x, cur.y - 12); ctx.lineTo(cur.x, cur.y + 12); ctx.stroke();
+    }
+  }
+  function render() {
+    histEl.innerHTML = "";
+    hist.forEach((e, i) => {
+      const li = document.createElement("li");
+      li.textContent = e.label;
+      if (i < pos) li.className = "on" + (i === pos - 1 ? " now" : ""); else li.className = "gone";
+      if (i === pos - 1) li.setAttribute("aria-current", "step");
+      histEl.appendChild(li);
+    });
+    undoB.disabled = pos === 0; redoB.disabled = pos === hist.length;
+    draw();
+  }
+  function stamp(x, y) {
+    const marks = hist.slice(0, pos).filter((e) => !e.base).length;
+    if (marks >= MAXM) { say("That is enough dots."); return; }
+    const branched = pos < hist.length;
+    hist = hist.slice(0, pos);
+    hist.push({ label: "a dot", x: Math.round(x), y: Math.round(y) });
+    pos = hist.length; done = false; status.classList.remove("done");
+    say(branched ? "A dot. The rest of the history is gone, as it always is." : "A dot.");
+    render();
+  }
+  function undo() {
+    if (pos === 0) return;
+    const e = hist[pos - 1]; pos--;
+    if (pos === 0) {
+      done = true; status.classList.add("done"); status.textContent = "";
+      say("Nothing left to undo. Nobody did this yet.");
+      const r = cv.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 22);
+    } else say("Undid " + e.label + ".");
+    render();
+  }
+  function redo() {
+    if (pos >= hist.length) return;
+    pos++; done = false; status.classList.remove("done");
+    say("Did " + hist[pos - 1].label + " again.");
+    render();
+  }
+  function pt(e) {
+    const r = cv.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * W / r.width, y: (e.clientY - r.top) * H / r.height };
+  }
+  cv.addEventListener("pointerdown", (e) => { const q = pt(e); cur = q; stamp(q.x, q.y); });
+  cv.addEventListener("keydown", (e) => {
+    const d = { ArrowLeft: [-16, 0], ArrowRight: [16, 0], ArrowUp: [0, -16], ArrowDown: [0, 16] }[e.key];
+    if (d) { e.preventDefault(); cur = { x: Math.min(W - 8, Math.max(8, cur.x + d[0])), y: Math.min(H - 8, Math.max(8, cur.y + d[1])) }; draw(); return; }
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); stamp(cur.x, cur.y); }
+  });
+  cv.addEventListener("focus", draw); cv.addEventListener("blur", draw);
+  document.addEventListener("keydown", (e) => {
+    if (!(e.ctrlKey || e.metaKey)) return;
+    const k = e.key.toLowerCase();
+    if (k === "z" && !e.shiftKey) { e.preventDefault(); undo(); }
+    else if (k === "y" || (k === "z" && e.shiftKey)) { e.preventDefault(); redo(); }
+  });
+  undoB.addEventListener("click", undo); redoB.addEventListener("click", redo); resetB.addEventListener("click", fresh);
+  fresh();
+</script>
+</body>
+</html>

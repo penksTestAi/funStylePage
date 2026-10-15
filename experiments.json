@@ -1,5 +1,13 @@
 [
   {
+    "slug": "volume-0022",
+    "type": "volume",
+    "title": "Volume 22",
+    "blurb": "The volume is wherever the marble stops.",
+    "date": "2026-10-15T08:21:56.843Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A small speaker beside a tilted plank with a marble rolling along it\">\n    <rect x=\"22\" y=\"30\" width=\"46\" height=\"62\" rx=\"6\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <circle cx=\"45\" cy=\"52\" r=\"9\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <circle cx=\"45\" cy=\"76\" r=\"5\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <path class=\"pulse\" d=\"M76 50 q8 10 0 20\" fill=\"none\" stroke=\"#1a6ef0\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <path class=\"pulse d2\" d=\"M84 44 q14 16 0 32\" fill=\"none\" stroke=\"#1a6ef0\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <g class=\"tilt\"><rect x=\"100\" y=\"86\" width=\"84\" height=\"8\" rx=\"3\" fill=\"#c98a4b\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <circle class=\"roll\" cx=\"112\" cy=\"78\" r=\"8\" fill=\"#ff5c8a\" stroke=\"currentColor\" stroke-width=\"2.5\"/></g>\n    <path d=\"M142 94 L134 108 H150 Z\" fill=\"currentColor\"/>\n  </svg>"
+  },
+  {
     "slug": "elevator-0021",
     "type": "elevator",
     "title": "Lift 21",

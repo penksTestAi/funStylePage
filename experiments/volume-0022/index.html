@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Volume 22 · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626;  }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626;  }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  button:focus-visible, .board:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  button:disabled { opacity: .5; cursor: default; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .tilt { animation: tilt 3s ease-in-out infinite alternate; }
+  .d2 { animation-delay: .45s; }
+  .roll, .pulse, .tilt { transform-box: fill-box; transform-origin: center; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(60px); } }
+  @keyframes tilt { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+  .panel { max-width: 460px; margin: 16px auto; }
+  .ask { background: var(--soft); border-radius: 8px; padding: 10px 12px; min-height: 2.6em; }
+  .read { font-size: 2.6rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 12px 0 0; }
+  .words { min-height: 1.5em; opacity: .8; margin: 0 0 12px; }
+  .board { position: relative; height: 78px; margin: 8px 0; touch-action: none; cursor: ew-resize; border-radius: 8px; user-select: none; }
+  .plank { position: absolute; left: 0; right: 0; top: 36px; height: 14px; border-radius: 4px; border: 2px solid var(--ink); background: #c98a4b; transform-origin: 50% 50%; }
+  .notches { position: absolute; inset: 0; }
+  .notches i { position: absolute; top: 56px; width: 2px; height: 6px; background: var(--ink); transform: translateX(-1px); }
+  .ball { position: absolute; top: 10px; width: 26px; height: 26px; margin-left: -13px; border-radius: 50%; background: #ff5c8a; border: 2px solid var(--ink); box-sizing: border-box; }
+  .nums { display: flex; justify-content: space-between; font-size: .8rem; opacity: .7; padding: 0 2px; }
+  .pips { display: flex; justify-content: center; gap: 6px; margin: 8px 0; }
+  .pips i { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); background: var(--paper); }
+  .pips i.on { background: #2bb673; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero" id="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A small speaker beside a tilted plank with a marble rolling along it">
+    <rect x="22" y="30" width="46" height="62" rx="6" fill="#ffb020" stroke="currentColor" stroke-width="2.5"/>
+    <circle cx="45" cy="52" r="9" fill="var(--paper)" stroke="currentColor" stroke-width="2.5"/>
+    <circle cx="45" cy="76" r="5" fill="var(--paper)" stroke="currentColor" stroke-width="2.5"/>
+    <path class="pulse" d="M76 50 q8 10 0 20" fill="none" stroke="#1a6ef0" stroke-width="2" stroke-linecap="round"/>
+    <path class="pulse d2" d="M84 44 q14 16 0 32" fill="none" stroke="#1a6ef0" stroke-width="2" stroke-linecap="round"/>
+    <g class="tilt"><rect x="100" y="86" width="84" height="8" rx="3" fill="#c98a4b" stroke="currentColor" stroke-width="2.5"/>
+    <circle class="roll" cx="112" cy="78" r="8" fill="#ff5c8a" stroke="currentColor" stroke-width="2.5"/></g>
+    <path d="M142 94 L134 108 H150 Z" fill="currentColor"/>
+  </svg></div>
+<h1>Volume 22</h1><p class="blurb">The volume is wherever the marble stops. Nothing here makes a sound.</p>
+<section class="panel" aria-label="Volume control">
+  <div class="ask" id="ask"><span id="req"></span><br><span id="msg"></span></div>
+  <p class="read" id="read" aria-hidden="true">5</p>
+  <p class="words" id="words" aria-hidden="true"></p>
+  <div class="board" id="board" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="10" aria-valuenow="5" aria-valuetext="Volume 5" aria-label="Volume. Left and right arrow keys tilt the plank; Home levels it." aria-describedby="tiltinfo">
+    <div class="notches" id="notches"></div>
+    <div class="ball" id="ball"></div>
+    <div class="plank" id="plank"></div>
+  </div>
+  <div class="nums" aria-hidden="true"><span>0</span><span>5</span><span>10</span></div>
+  <p class="sr" id="tiltinfo">Tilt is <span id="tiltv">level</span>.</p>
+  <div class="row">
+    <button type="button" id="tl" class="ghost">Tilt left</button>
+    <button type="button" id="lv" class="ghost">Level</button>
+    <button type="button" id="tr" class="ghost">Tilt right</button>
+  </div>
+  <div class="row">
+    <button type="button" id="biscuit" class="ghost">Offer the marble a biscuit</button>
+    <button type="button" id="set">Set volume</button>
+  </div>
+  <div class="pips" id="pips" aria-hidden="true"></div>
+  <p class="words" id="done" hidden>The neighbour has been satisfied <span id="goalw">three</span> times. The marble would like a lie down.</p>
+  <div class="row"><button type="button" id="again" class="ghost" hidden>Ask again</button></div>
+</section>
+<div class="sr" id="live" role="status" aria-live="polite"></div>
+<a class="back" href="../../">← all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function burst(x, y, n) {
+    if (calm()) return;
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    burst(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2, 14);
+  });
+
+  const $ = (id) => document.getElementById(id);
+  const words = ["a moth clearing its throat", "a fridge thinking", "a polite cat", "a library, mid-sigh", "a kettle at the back of the house", "a conversation next door", "a lawnmower with opinions", "a brass band in a stairwell", "a train that is late and cross", "a small volcano", "the neighbour's whole point"];
+  const GOAL = 3;
+  const NUMW = ["zero", "one", "two", "three", "four", "five"];
+  $("goalw").textContent = NUMW[GOAL];
+  const board = $("board"), ball = $("ball"), plank = $("plank");
+  let x = 5, v = 0, tilt = 0, target = 2, wins = 0, biscuits = 0, drag = false, last = 0, restFor = 0, over = false;
+  for (let i = 0; i <= 10; i++) { const n = document.createElement("i"); n.style.left = (i * 10) + "%"; $("notches").appendChild(n); }
+  for (let i = 0; i < GOAL; i++) $("pips").appendChild(document.createElement("i"));
+
+  function ask() {
+    do { target = 1 + Math.floor(Math.random() * 9); } while (Math.round(x) === target);
+    $("req").textContent = "The neighbour knocks: “Could you make it " + target + "? Just " + target + ".”";
+    $("msg").textContent = "\u00a0"; biscuits = 0; $("biscuit").disabled = false;
+    $("live").textContent = "The neighbour would like volume " + target + ".";
+  }
+  function setTilt(t) {
+    tilt = Math.max(-1, Math.min(1, Math.round(t * 100) / 100));
+    $("tiltv").textContent = Math.abs(tilt) < .01 ? "level" : (tilt < 0 ? "left " : "right ") + Math.round(Math.abs(tilt) * 100) + " percent";
+  }
+  function draw() {
+    const w = board.clientWidth;
+    ball.style.left = (x / 10 * w) + "px";
+    plank.style.transform = "rotate(" + (tilt * 5) + "deg)";
+    const n = Math.round(x);
+    $("read").textContent = n;
+    $("words").textContent = "about " + words[n];
+    if (board.getAttribute("aria-valuenow") !== String(n)) {
+      board.setAttribute("aria-valuenow", n);
+      board.setAttribute("aria-valuetext", "Volume " + n + ", " + words[n]);
+    }
+  }
+  function step(t) {
+    const dt = Math.min(.05, (t - last) / 1000 || .016); last = t;
+    v += tilt * 14 * dt;
+    v -= Math.sin(x * 2 * Math.PI) * 5.5 * dt;   // pull toward the nearest notch
+    v *= Math.pow(.12, dt);                        // friction
+    x += v * dt;
+    if (x < 0) { x = 0; v = Math.abs(v) * .4; }
+    if (x > 10) { x = 10; v = -Math.abs(v) * .4; }
+    if (Math.abs(v) < .15 && Math.abs(tilt) < .15 && Math.abs(x - Math.round(x)) < .12) restFor += dt; else restFor = 0;
+    draw();
+    requestAnimationFrame(step);
+  }
+  const settled = () => restFor > .35;
+
+  function tiltBy(d) { setTilt(tilt + d); }
+  board.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft" || e.key === "ArrowDown") { tiltBy(-.15); e.preventDefault(); }
+    else if (e.key === "ArrowRight" || e.key === "ArrowUp") { tiltBy(.15); e.preventDefault(); }
+    else if (e.key === "Home" || e.key === "Escape") { setTilt(0); e.preventDefault(); }
+  });
+  function fromPointer(e) {
+    const r = board.getBoundingClientRect();
+    setTilt(((e.clientX - r.left) / r.width - .5) * 2.4);
+  }
+  board.addEventListener("pointerdown", (e) => { drag = true; board.setPointerCapture(e.pointerId); fromPointer(e); });
+  board.addEventListener("pointermove", (e) => { if (drag) fromPointer(e); });
+  board.addEventListener("pointerup", () => { drag = false; });
+  board.addEventListener("pointercancel", () => { drag = false; });
+  $("tl").onclick = () => tiltBy(-.2);
+  $("tr").onclick = () => tiltBy(.2);
+  $("lv").onclick = () => setTilt(0);
+  $("biscuit").onclick = () => {
+    biscuits++;
+    const dir = target > x ? 1 : -1;
+    setTilt(dir * .5);
+    v += dir * 1.5;
+    $("live").textContent = biscuits < 3 ? "The marble takes the biscuit and leans toward " + target + "." : "That was the last biscuit.";
+    if (biscuits >= 3) $("biscuit").disabled = true;
+  };
+  $("set").onclick = () => {
+    if (over) return;
+    const n = Math.round(x);
+    if (!settled()) { $("live").textContent = "The marble is still moving. It says it has not decided."; $("msg").textContent = "The marble is still moving. It says it has not decided."; return; }
+    if (n === target) {
+      wins++;
+      $("pips").children[wins - 1].classList.add("on");
+      if (wins >= GOAL) {
+        over = true; $("done").hidden = false; $("again").hidden = false; $("set").disabled = true; $("biscuit").disabled = true;
+        $("req").textContent = "Volume " + n + ". The knocking has stopped."; $("msg").textContent = "\u00a0";
+        $("live").textContent = "Volume " + n + ". That was " + NUMW[GOAL] + ". The neighbour is satisfied.";
+        $("again").focus();
+      } else {
+        $("live").textContent = "Volume " + n + ". The neighbour says thanks, then thinks of something else.";
+        ask();
+      }
+    } else {
+      $("msg").textContent = "Volume " + n + ". The neighbour wanted " + target + ". The marble shrugs.";
+      $("live").textContent = "Volume " + n + ", not " + target + ". The marble shrugs.";
+    }
+  };
+  $("again").onclick = () => {
+    over = false; wins = 0; $("done").hidden = true; $("again").hidden = true; $("set").disabled = false;
+    [...$("pips").children].forEach((p) => p.classList.remove("on"));
+    ask();
+    board.focus();
+  };
+  ask(); setTilt(0);
+  requestAnimationFrame((t) => { last = t; step(t); });
+</script>
+</body>
+</html>

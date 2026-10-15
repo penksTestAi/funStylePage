@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prove it 19 · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --good: #1b7d4c; --bad: #b3261e; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --good: #5fd39a; --bad: #ff8a80; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --good: #5fd39a; --bad: #ff8a80; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  a.backlink { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .spin, .roll, .pulse { transform-box: fill-box; transform-origin: center; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  .wob { animation: wob 2.4s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 80% 80%; }
+  @keyframes wob { to { transform: rotate(-10deg); } }
+  .card { max-width: 460px; margin: 16px auto; text-align: left; border: 2px solid var(--ink); border-radius: 8px; padding: 16px; }
+  .step { font-size: .85rem; opacity: .75; margin: 0 0 8px; }
+  .card h2 { font-size: 1.15rem; margin: 0 0 12px; }
+  button:focus-visible, input:focus-visible, .tile:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .tick { display: flex; align-items: center; gap: 12px; font-weight: 700; padding: 12px; border: 2px solid var(--ink); border-radius: 6px; margin: 0 0 12px; }
+  .tick input { width: 26px; height: 26px; margin: 0; accent-color: var(--accent); }
+  .tick label { margin: 0; flex: 1; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 0 0 12px; padding: 0; border: 0; }
+  .tile { position: relative; }
+  .tile input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .tile span { display: flex; align-items: center; justify-content: center; text-align: center; min-height: 64px; padding: 4px; background: var(--soft); border: 2px solid transparent; border-radius: 6px; font-size: .95rem; }
+  .tile input:checked + span { border-color: var(--accent); font-weight: 700; }
+  .tile input:checked + span::before { content: "\2713 "; color: var(--good); margin-right: 4px; }
+  .word { display: block; width: 100%; height: auto; background: var(--soft); border-radius: 6px; margin: 0 0 12px; }
+  input[type=text] { font: inherit; width: 100%; box-sizing: border-box; padding: 10px; border: 2px solid var(--ink); border-radius: 6px; background: var(--paper); color: var(--ink); margin-bottom: 8px; }
+  input[type=range] { width: 100%; accent-color: var(--accent); margin: 8px 0; }
+  .big { font-size: 2rem; font-weight: 700; text-align: center; margin: 0; }
+  .status { min-height: 1.5em; margin: 8px 0; }
+  .status.done { color: var(--good); font-weight: 700; }
+  .card .row { justify-content: flex-start; }
+  button:disabled { opacity: .45; cursor: default; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero" id="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A checkbox with a tick in it, a gear turning beside it, and a magnifying glass wobbling over the box">
+    <path d="M20 108 H180" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="40" y="36" width="64" height="64" rx="8" style="fill:var(--paper)" stroke="currentColor" stroke-width="3"/>
+    <path d="M54 68 L68 82 L92 50" fill="none" stroke="#2bb673" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <g class="spin"><circle cx="146" cy="40" r="14" fill="#ffb020" stroke="currentColor" stroke-width="2.5"/><circle cx="146" cy="40" r="5" style="fill:var(--paper)" stroke="currentColor" stroke-width="2"/><path d="M146 20 V26 M146 54 V60 M126 40 H132 M160 40 H166 M132 26 L136 30 M156 50 L160 54 M160 26 L156 30 M136 50 L132 54" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></g>
+    <g class="wob"><circle cx="128" cy="78" r="17" fill="none" stroke="#1a6ef0" stroke-width="4"/><path d="M140 91 L156 107" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></g>
+  </svg></div>
+<h1>Prove it 19</h1><p class="blurb">Please confirm that you are a person. It will take a moment.</p>
+<form class="card" id="f" aria-labelledby="ttl" novalidate>
+  <p class="step" id="step"></p>
+  <h2 id="ttl" tabindex="-1"></h2>
+  <div id="body"></div>
+  <p class="status" id="status"></p>
+  <div class="row"><button type="submit" id="go">Continue</button></div>
+</form>
+<div class="sr" id="live" role="status" aria-live="polite"></div>
+<a class="backlink" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function burst(x, y, n) {
+    if (calm()) return;
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    burst(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2, 14);
+  });
+
+  const FEEL = ["dread", "relief", "nostalgia", "embarrassment", "hope"];
+  const TILES = ["dread", "a spoon", "relief", "gravel", "nostalgia", "a hinge", "Tuesday", "embarrassment", "hope"];
+  const WORD = "nearly";
+  const body = document.getElementById("body"), ttl = document.getElementById("ttl"), stepEl = document.getElementById("step");
+  const status = document.getElementById("status"), live = document.getElementById("live"), goB = document.getElementById("go"), form = document.getElementById("f");
+  const N = 5;
+  let step, tries, ticks, pct = 50;
+
+  function say(s, quiet) { status.textContent = s; if (!quiet) live.textContent = s; }
+  function el(tag, attrs, kids) {
+    const e = document.createElement(tag);
+    for (const k in attrs || {}) e.setAttribute(k, attrs[k]);
+    (kids || []).forEach((c) => e.append(c));
+    return e;
+  }
+  function show(first) {
+    stepEl.textContent = step < N ? "Step " + (step + 1) + " of " + N : "Done";
+    body.innerHTML = ""; tries = 0;
+    status.classList.remove("done");
+    if (step === 0) {
+      ttl.textContent = "Are you a person?";
+      const cb = el("input", { type: "checkbox", id: "c0" });
+      body.append(el("div", { class: "tick" }, [cb, el("label", { for: "c0" }, [ticks ? "I am still a person" : "I am a person"])]));
+      goB.textContent = "Continue";
+    } else if (step === 1) {
+      ttl.textContent = "Select every square that contains a feeling.";
+      const fs = el("fieldset", { class: "grid" }, [el("legend", { class: "sr" }, ["Squares"])]);
+      TILES.forEach((t, i) => fs.append(el("label", { class: "tile" }, [el("input", { type: "checkbox", value: t, "data-i": i }), el("span", {}, [t])])));
+      body.append(fs);
+      goB.textContent = "Verify";
+    } else if (step === 2) {
+      ttl.textContent = "Type the word you see.";
+      const svg = '<svg class="word" viewBox="0 0 300 90" role="img" aria-label="A word in wobbly letters with a line through it. It is the word nearly."><g font-family="Roboto, system-ui, sans-serif" font-weight="700" font-size="46" fill="currentColor">' +
+        WORD.split("").map((c, i) => '<text x="' + (28 + i * 40) + '" y="' + (58 + (i % 2 ? 8 : -6)) + '" transform="rotate(' + [-14, 9, -6, 15, -11, 7][i] + ' ' + (38 + i * 40) + ' 50)">' + c + '</text>').join("") +
+        '</g><path d="M10 40 C80 60 150 20 290 52" fill="none" stroke="#ff5c8a" stroke-width="3"/><path d="M10 66 C90 30 170 78 290 36" fill="none" stroke="#1a6ef0" stroke-width="3"/></svg>';
+      body.insertAdjacentHTML("beforeend", svg);
+      body.append(el("label", { for: "w", class: "sr" }, ["Word"]), el("input", { type: "text", id: "w", autocomplete: "off", autocapitalize: "off", spellcheck: "false" }));
+      goB.textContent = "Verify";
+    } else if (step === 3) {
+      ttl.textContent = "How much of a person do you feel like today? Any number that is not round.";
+      body.append(el("p", { class: "big", id: "val", "aria-hidden": "true" }, ["50%"]),
+        el("input", { type: "range", id: "sl", min: 0, max: 100, step: 1, value: 50, "aria-label": "Percent person", "aria-valuetext": "50%" }));
+      body.querySelector("#sl").addEventListener("input", (e) => { document.getElementById("val").textContent = e.target.value + "%"; e.target.setAttribute("aria-valuetext", e.target.value + "%"); });
+      goB.textContent = "Submit feeling";
+    } else if (step === 4) {
+      ttl.textContent = "Are you sure?";
+      body.append(el("div", { class: "row", id: "yn" }, [el("button", { type: "button", id: "no", class: "ghost" }, ["No"]), el("button", { type: "button", id: "yes" }, ["Yes"])]));
+      body.querySelector("#no").addEventListener("click", () => say("Understandable. Are you sure?"));
+      body.querySelector("#yes").addEventListener("click", () => { step++; finish(); });
+      goB.hidden = true;
+    }
+    if (first) say(step === 0 ? "Press the box when ready." : "", true);
+    const f = body.querySelector("input, #yes");
+    if (!first && f) f.focus();
+  }
+  function advance(msg) { step++; say(msg); show(); }
+  function finish() {
+    stepEl.textContent = "Done"; ttl.textContent = "You are a person.";
+    body.innerHTML = "";
+    body.append(el("p", {}, ["Confidence " + pct + "%. " + (pct >= 90 ? "This is the highest we have recorded. " : "") + "Nothing you did here was sent or kept."]));
+    goB.hidden = true;
+    status.classList.add("done");
+    say("Verified. You may continue being a person.");
+    const r = form.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + 40, 30);
+    ttl.focus();
+  }
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (step === 0) {
+      if (!body.querySelector("input").checked) { say("The box is empty. So is that answer."); return; }
+      ticks = (ticks || 0) + 1;
+      if (ticks < 3) { say(ticks === 1 ? "That is what a robot would say. Again, but sadder." : "Closer. One more, with a sigh."); show(); }
+      else advance("Fine. Moving on.");
+    } else if (step === 1) {
+      const on = [...body.querySelectorAll("input:checked")].map((i) => i.value);
+      const ok = on.length === FEEL.length && FEEL.every((f) => on.includes(f));
+      if (ok) advance("Correct. Tuesday is not a feeling, whatever it did to you.");
+      else { tries++; say(tries < 2 ? "Not quite. Some of those you can hold, and some you cannot." : "A spoon is a spoon. Gravel is gravel. Keep going."); }
+    } else if (step === 2) {
+      const v = body.querySelector("#w").value.trim().toLowerCase();
+      if (v === WORD) advance("Correct. Few can read that. Most of them are cats.");
+      else { tries++; say(tries < 2 ? "No. The letters are not that sure either." : "It begins with n and means almost."); }
+    } else if (step === 3) {
+      const v = +body.querySelector("#sl").value;
+      if (v % 5 === 0) say(v + "% is a round number. People are not round.");
+      else { pct = v; advance(v + "%. Awkward. Convincing."); }
+    }
+  });
+  function fresh() { step = 0; tries = 0; ticks = 0; goB.hidden = false; show(true); }
+  fresh();
+</script>
+</body>
+</html>

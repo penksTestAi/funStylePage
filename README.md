@@ -35,6 +35,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `tangle` | A knotted earbud cable. Drag it apart; stretch it nearly straight and it is untangled, then it slowly curls up again. |
 | `undo` | A small canvas with its undo history shown. Leave dots, then keep pressing Undo: it goes back past them, past the paper, to the ground. Mouse or keyboard. |
 | `password` | A sign-up box whose password rules keep growing and contradicting each other. An appeal withdraws the older rule, and it can always be finished. Mouse or keyboard. |
+| `captcha` | A "prove you are a person" check whose steps get stranger: a sadder checkbox, feeling tiles, a wobbly word, a feeling that must not be round. It can always be finished. Mouse or keyboard. Nothing typed is sent or kept. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 

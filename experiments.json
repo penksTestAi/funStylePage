@@ -1,5 +1,13 @@
 [
   {
+    "slug": "captcha-0019",
+    "type": "captcha",
+    "title": "Prove it 19",
+    "blurb": "Please confirm that you are a person. It will take a moment.",
+    "date": "2026-10-15T04:21:14.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A checkbox with a tick in it, a gear turning beside it, and a magnifying glass wobbling over the box\">\n    <path d=\"M20 108 H180\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n    <rect x=\"40\" y=\"36\" width=\"64\" height=\"64\" rx=\"8\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"3\"/>\n    <path d=\"M54 68 L68 82 L92 50\" fill=\"none\" stroke=\"#2bb673\" stroke-width=\"7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <g class=\"spin\"><circle cx=\"146\" cy=\"40\" r=\"14\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"146\" cy=\"40\" r=\"5\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M146 20 V26 M146 54 V60 M126 40 H132 M160 40 H166 M132 26 L136 30 M156 50 L160 54 M160 26 L156 30 M136 50 L132 54\" stroke=\"currentColor\" stroke-width=\"3.5\" stroke-linecap=\"round\"/></g>\n    <g class=\"wob\"><circle cx=\"128\" cy=\"78\" r=\"17\" fill=\"none\" stroke=\"#1a6ef0\" stroke-width=\"4\"/><path d=\"M140 91 L156 107\" stroke=\"currentColor\" stroke-width=\"5\" stroke-linecap=\"round\"/></g>\n  </svg>"
+  },
+  {
     "slug": "password-0018",
     "type": "password",
     "title": "Sign-up 18",

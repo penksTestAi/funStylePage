@@ -1,5 +1,13 @@
 [
   {
+    "slug": "password-0018",
+    "type": "password",
+    "title": "Sign-up 18",
+    "blurb": "Choose a password. The rules will follow.",
+    "date": "2026-10-15T02:21:40.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A padlock with a row of asterisks above it, and a tiny key that does not fit\">\n    <path d=\"M20 108 H180\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n    <g class=\"blink\" fill=\"currentColor\" font-size=\"22\" font-family=\"Roboto, system-ui, sans-serif\" font-weight=\"700\"><text x=\"52\" y=\"30\">*</text><text x=\"78\" y=\"30\">*</text><text x=\"104\" y=\"30\">*</text><text x=\"130\" y=\"30\">*</text></g>\n    <g class=\"wob\"><path d=\"M78 62 V50 C78 34 122 34 122 50 V62\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"5\" stroke-linecap=\"round\"/></g>\n    <rect x=\"68\" y=\"60\" width=\"64\" height=\"46\" rx=\"6\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <circle cx=\"100\" cy=\"80\" r=\"6\" fill=\"var(--paper)\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M100 86 V96\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n    <g transform=\"translate(142 88) rotate(-20)\"><circle cx=\"0\" cy=\"0\" r=\"7\" fill=\"#1a6ef0\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M7 0 H30 M24 0 V7 M30 0 V5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"/></g>\n  </svg>"
+  },
+  {
     "slug": "undo-0017",
     "type": "undo",
     "title": "Undo 17",

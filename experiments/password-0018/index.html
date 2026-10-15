@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign-up 18 · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --good: #1b7d4c; --bad: #b3261e; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --good: #5fd39a; --bad: #ff8a80; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --good: #5fd39a; --bad: #ff8a80; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  a.backlink { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .spin, .roll, .pulse { transform-box: fill-box; transform-origin: center; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  .wob { animation: wob 2.4s ease-in-out infinite alternate; }
+  .blink { animation: blink 1.6s steps(2, jump-none) infinite; }
+  .wob { transform-box: fill-box; transform-origin: 20% 100%; }
+  @keyframes wob { to { transform: rotate(-8deg); } }
+  @keyframes blink { 50% { opacity: .2; } }
+  .card { max-width: 460px; margin: 16px auto; text-align: left; border: 2px solid var(--ink); border-radius: 8px; padding: 16px; }
+  label { display: block; font-weight: 700; margin-bottom: 6px; }
+  input[type=text] { font: inherit; width: 100%; box-sizing: border-box; padding: 10px; border: 2px solid var(--ink); border-radius: 6px; background: var(--paper); color: var(--ink); }
+  input[type=text]:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .count { font-size: .85rem; opacity: .75; margin: 4px 0 0; }
+  .rules { list-style: none; margin: 14px 0; padding: 0; }
+  .rules li { padding: 6px 8px; border-radius: 4px; margin: 4px 0; background: var(--soft); display: flex; gap: 8px; }
+  .rules li .mk { flex: none; width: 1.3em; font-weight: 700; }
+  .rules li.ok .mk { color: var(--good); }
+  .rules li.bad .mk { color: var(--bad); }
+  .rules li.out { text-decoration: line-through; color: color-mix(in srgb, var(--ink) 70%, var(--paper)); }
+  .rules li.out .why { text-decoration: none; display: block; font-size: .85rem; }
+  .rules li .why { font-size: .85rem; }
+  .status { min-height: 1.5em; margin: 8px 0; }
+  .status.done { color: var(--good); font-weight: 700; }
+  .card .row { justify-content: flex-start; }
+  button.ghost { background: var(--soft); color: var(--ink); }
+  button:disabled { opacity: .45; cursor: default; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero" id="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A padlock with a row of asterisks above it, and a tiny key that does not fit">
+    <path d="M20 108 H180" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <g class="blink" fill="currentColor" font-size="22" font-family="Roboto, system-ui, sans-serif" font-weight="700"><text x="52" y="30">*</text><text x="78" y="30">*</text><text x="104" y="30">*</text><text x="130" y="30">*</text></g>
+    <g class="wob"><path d="M78 62 V50 C78 34 122 34 122 50 V62" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></g>
+    <rect x="68" y="60" width="64" height="46" rx="6" fill="#ffb020" stroke="currentColor" stroke-width="2.5"/>
+    <circle cx="100" cy="80" r="6" style="fill:var(--paper)" stroke="currentColor" stroke-width="2.5"/><path d="M100 86 V96" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    <g transform="translate(142 88) rotate(-20)"><circle cx="0" cy="0" r="7" fill="#1a6ef0" stroke="currentColor" stroke-width="2"/><path d="M7 0 H30 M24 0 V7 M30 0 V5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></g>
+  </svg></div>
+<h1>Sign-up 18</h1><p class="blurb">Choose a password. The rules will follow.</p>
+<form class="card" id="f" aria-label="Sign-up" novalidate>
+  <label for="pw">Password</label>
+  <input type="text" id="pw" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="rules count">
+  <p class="count" id="count">0 characters</p>
+  <ol class="rules" id="rules" aria-label="Password rules"></ol>
+  <p class="status" id="status">Rule 1 is waiting for you.</p>
+  <div class="row"><button type="button" id="appeal" class="ghost" hidden>Appeal</button><button type="button" id="suggest" class="ghost">Suggest one</button><button type="submit" id="go" disabled>Create account</button></div>
+</form>
+<div class="sr" id="live" role="status" aria-live="polite"></div>
+<a class="backlink" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function burst(x, y, n) {
+    if (calm()) return;
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    burst(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2, 14);
+  });
+
+  // Rules in order. "out" names the older rule that this one contradicts; Appeal withdraws that older one.
+  const RULES = [
+    { t: "At least 8 characters.", f: (p) => p.length >= 8 },
+    { t: "At least one number.", f: (p) => /\d/.test(p) },
+    { t: "At least one capital letter.", f: (p) => /[A-Z]/.test(p) },
+    { t: "At least one of ! ? # *", f: (p) => /[!?#*]/.test(p) },
+    { t: "At least 14 characters. Eight was a draft.", f: (p) => p.length >= 14 },
+    { t: "No more than 12 characters. Longer passwords are a security risk.", f: (p) => p.length <= 12, out: 4, why: "Rule 5 was written by another department." },
+    { t: "No numbers. Numbers are guessable.", f: (p) => !/\d/.test(p), out: 1, why: "Rule 2 was only ever a suggestion." },
+    { t: "Contains the word \u201csecure\u201d, in any capitals.", f: (p) => /secure/i.test(p) },
+    { t: "Starts with a lowercase letter.", f: (p) => /^[a-z]/.test(p) },
+    { t: "No letter e, in any capitals. It is overused.", f: (p) => !/e/i.test(p), out: 7, why: "Rule 8 has been reviewed and found secure." },
+    { t: "Exactly 12 characters. Finally, a number we can all agree on.", f: (p) => p.length === 12 }
+  ];
+  const pw = document.getElementById("pw"), rulesEl = document.getElementById("rules"), status = document.getElementById("status");
+  const live = document.getElementById("live"), count = document.getElementById("count");
+  const appealB = document.getElementById("appeal"), suggestB = document.getElementById("suggest"), goB = document.getElementById("go");
+  let shown, outSet, finished;
+
+  function say(s, quiet) { status.textContent = s; if (!quiet) live.textContent = s; }
+  function active() { const a = []; for (let i = 0; i < shown; i++) if (!outSet.has(i)) a.push(i); return a; }
+  function allPass(p) { return active().every((i) => RULES[i].f(p)); }
+  function clash() {
+    for (const i of active()) { const o = RULES[i].out; if (o !== undefined && !outSet.has(o)) return i; }
+    return -1;
+  }
+  function render() {
+    const p = pw.value;
+    rulesEl.innerHTML = "";
+    for (let i = 0; i < shown; i++) {
+      const li = document.createElement("li"), mk = document.createElement("span"), tx = document.createElement("span");
+      mk.className = "mk"; mk.setAttribute("aria-hidden", "true");
+      let state;
+      if (outSet.has(i)) { li.className = "out"; mk.textContent = "\u2013"; state = "withdrawn"; }
+      else if (RULES[i].f(p)) { li.className = "ok"; mk.textContent = "\u2713"; state = "met"; }
+      else { li.className = "bad"; mk.textContent = "\u2717"; state = "not met"; }
+      tx.innerHTML = "";
+      tx.append("Rule " + (i + 1) + ": " + RULES[i].t + " ");
+      const sr = document.createElement("span"); sr.className = "sr"; sr.textContent = "(" + state + ")"; tx.append(sr);
+      li.append(mk, tx);
+      rulesEl.appendChild(li);
+    }
+    // reasons for withdrawn rules
+    RULES.forEach((r, j) => { if (r.out !== undefined && outSet.has(r.out) && j < shown) {
+      const li = rulesEl.children[r.out]; if (li && !li.querySelector(".why")) { const w = document.createElement("span"); w.className = "why"; w.textContent = r.why; li.lastChild.append(w); }
+    } });
+    count.textContent = p.length + (p.length === 1 ? " character" : " characters");
+    appealB.hidden = clash() < 0;
+    goB.disabled = !finished;
+  }
+  function evaluate(pre) {
+    const p = pw.value, news = pre ? [pre] : [];
+    while (shown < RULES.length && allPass(p)) {
+      shown++;
+      news.push("New rule " + shown + ": " + RULES[shown - 1].t);
+      if (RULES[shown - 1].out !== undefined) break;
+    }
+    finished = shown === RULES.length && allPass(p);
+    render();
+    if (finished && news.length) news.push("Every rule is met. You can create the account.");
+    if (news.length) {
+      const c = clash();
+      say(news.join(" ") + (c >= 0 ? " This contradicts rule " + (RULES[c].out + 1) + ". You may appeal." : ""));
+    } else if (finished) {
+      say("Every rule is met. You can create the account.", true);
+    }
+  }
+  pw.addEventListener("input", () => evaluate());
+  appealB.addEventListener("click", () => {
+    const c = clash(); if (c < 0) return;
+    const hadFocus = document.activeElement === appealB;
+    outSet.add(RULES[c].out);
+    evaluate("Appeal upheld. Rule " + (RULES[c].out + 1) + " is withdrawn. " + RULES[c].why);
+    if (hadFocus && appealB.hidden) pw.focus();
+  });
+  function candidate() {
+    const toks = ["secure", "Q", "7", "!", "k", "m", "t"], fill = "kmtnbl";
+    let seed = pw.value.length * 7 + shown * 13 + 1;
+    const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
+    for (let n = 0; n < 40000; n++) {
+      let parts = toks.filter(() => rnd() < .6);
+      for (let i = parts.length; i > 1; i--) { const j = Math.floor(rnd() * i); [parts[i - 1], parts[j]] = [parts[j], parts[i - 1]]; }
+      let s = parts.join(""); const L = 8 + Math.floor(rnd() * 7);
+      while (s.length < L) { const k = Math.floor(rnd() * (s.length + 1)); s = s.slice(0, k) + fill[Math.floor(rnd() * fill.length)] + s.slice(k); }
+      if (allPass(s)) return s;
+    }
+    return "";
+  }
+  suggestB.addEventListener("click", () => {
+    const s = candidate();
+    if (!s) { say("Nothing suggested. That is also a result."); return; }
+    pw.value = s; pw.focus();
+    evaluate();
+    if (!live.textContent.startsWith("New rule") && !finished) say("Suggested: " + s + ". It meets every rule shown.");
+  });
+  document.getElementById("f").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!finished) return;
+    const r = goB.getBoundingClientRect(); burst(r.left + r.width / 2, r.top, 28);
+    status.classList.add("done"); goB.disabled = true; pw.readOnly = true; appealB.hidden = true; suggestB.disabled = true;
+    pw.focus();
+    say("Account created. Your password is strong. Please do not write it down.");
+  });
+  function fresh() {
+    shown = 1; outSet = new Set(); finished = false; pw.value = "";
+    status.classList.remove("done"); pw.readOnly = false; suggestB.disabled = false;
+    say("Rule 1 is waiting for you.", true); render();
+  }
+  fresh();
+</script>
+</body>
+</html>

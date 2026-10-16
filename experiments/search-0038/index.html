@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .sheet, .hero .tab { fill: var(--paper); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  .strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin: 16px auto 0; max-width: 460px; }
+  .tab { margin: 0; background: var(--soft); color: var(--ink); border-radius: 8px 8px 0 0; box-shadow: inset 0 0 0 2px var(--ink); min-width: 84px; }
+  .tab[aria-selected="true"] { background: var(--accent); color: var(--on-accent); }
+  .tab.ghost2 { box-shadow: inset 0 0 0 2px var(--ink), inset 0 -6px 0 var(--accent); }
+  .tab:focus-visible, button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .panel { max-width: 460px; min-height: 120px; margin: 0 auto 8px; padding: 20px 16px; border: 2px solid var(--ink); border-radius: 0 0 10px 10px; background: var(--soft); display: flex; flex-direction: column; justify-content: center; }
+  .panel:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .panel h2 { font-size: 1.2rem; margin: 0 0 6px; }
+  .panel p { margin: 0; }
+  .panel .also { font-size: .9rem; opacity: .75; margin-top: 8px; }
+  .hop { animation: hop .5s ease-out; } .jolt { animation: jolt .5s; } .fade { animation: fade .6s; }
+  @keyframes hop { from { transform: translateY(-14px); opacity: .3; } }
+  @keyframes jolt { 20% { transform: translateX(-12px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(3px); } }
+  @keyframes fade { from { opacity: 0; } }
+  .how { min-height: 1.6em; font-weight: 700; }
+  button:disabled { opacity: .45; cursor: default; }
+  .msg { min-height: 2.4em; }
+  .hint { font-size: .9rem; opacity: .75; }
+  .sf { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; max-width: 460px; margin: 16px auto 8px; }
+  .sf input { font: inherit; flex: 1 1 200px; min-width: 0; padding: 10px 12px; border: 2px solid var(--ink); border-radius: 6px; background: var(--paper); color: var(--ink); }
+  input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .res { max-width: 460px; margin: 8px auto; text-align: left; min-height: 120px; }
+  .res .head { font-weight: 700; margin: 0 0 6px; }
+  .res ul { list-style: none; margin: 0; padding: 0; }
+  .res li { background: var(--soft); border-radius: 8px; padding: 10px 12px; margin: 6px 0; }
+  .res li.ad { box-shadow: inset 0 0 0 2px var(--accent); }
+</style>
+</head>
+<body>
+<main>
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A magnifying glass over a row of tiny objects, looking at the wrong one, with a question mark drifting past">
+    <g class="bob"><rect x="24" y="82" width="26" height="20" rx="4" fill="#ffb020" stroke="currentColor" stroke-width="2.5"/></g>
+    <rect x="62" y="82" width="26" height="20" rx="4" fill="#2bb673" stroke="currentColor" stroke-width="2.5"/>
+    <g class="wobble"><rect x="100" y="82" width="26" height="20" rx="4" fill="#ff5c8a" stroke="currentColor" stroke-width="2.5"/></g>
+    <rect x="138" y="82" width="26" height="20" rx="4" fill="#1a6ef0" stroke="currentColor" stroke-width="2.5"/>
+    <g class="roll"><circle cx="68" cy="44" r="22" class="sheet" stroke="currentColor" stroke-width="3.5"/><path d="M84 60l26 26" stroke="currentColor" stroke-width="6" stroke-linecap="round"/></g>
+    <g class="pulse"><path d="M150 30c0-8 14-8 14 0 0 6-7 6-7 12" fill="none" stroke="#ff5c8a" stroke-width="3" stroke-linecap="round"/><circle cx="157" cy="50" r="2.5" fill="#ff5c8a"/></g>
+  </svg></div>
+<h1>Search</h1><p class="blurb" id="blurb">Find anything in the shed. Every search goes wrong in a new way, and there are <span id="n"></span>.</p>
+<div class="how" id="how" aria-live="polite"></div>
+<form class="sf" id="sf" role="search"><input id="q" type="search" aria-label="Search the shed" placeholder="kettle" autocomplete="off"><button type="submit" id="go">Search</button></form>
+<div class="res" id="res"></div>
+<div class="msg" id="msg" role="status" aria-live="polite"></div>
+<div class="hint">Type a word and press Enter or the Search button. Any word will do. Each search counts as a go.</div>
+<div class="row"><button type="button" class="ghost" id="reset">Start again</button></div>
+<a class="back" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function confetti(x, y) {
+    if (calm()) return;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    confetti(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2);
+  });
+
+  const $ = (id) => document.getElementById(id);
+  const TURNS = 6;
+  const WORDS = ["none", "one", "two", "three", "four", "five", "six"];
+  const ITEMS = ["Apple", "Kettle", "Ladder", "Lamp", "Key", "Spoon", "Umbrella", "Bucket"];
+  let turns, done;
+  const find = (q) => ITEMS.filter((n) => n.toLowerCase().includes(q.toLowerCase()));
+  const results = (n) => n + (n === 1 ? " result" : " results");
+  function show(head, list, ad) {
+    $("res").innerHTML = '<p class="head">' + head + "</p><ul>" +
+      (ad ? '<li class="ad">Sponsored: Search, now with more search</li>' : "") +
+      list.map((n) => "<li>" + n + "</li>").join("") + "</ul>";
+  }
+  function search() {
+    if (turns >= TURNS || done) return;
+    const q = $("q").value.trim();
+    if (!q) { $("msg").textContent = "Type a word first. That one does not count."; return; }
+    turns++;
+    $("how").textContent = "Goes used: " + turns + " of " + TURNS;
+    if (turns === 1) {
+      const w = q.slice(0, -1);
+      const l = w ? find(w) : [];
+      show(results(l.length) + " for \u201c" + w + "\u201d", l);
+      $("msg").textContent = "Searched for what you typed, minus the last letter." + (w ? "" : " With one letter, that is nothing.");
+    } else if (turns === 2) {
+      let s = 0; for (const c of q) s += c.charCodeAt(0);
+      const w = ITEMS[s % ITEMS.length].toLowerCase();
+      show("Showing results for \u201c" + w + "\u201d", find(w));
+      $("msg").textContent = "Did you mean something else? It did.";
+    } else if (turns === 3) {
+      const l = find(q);
+      show("0 results for \u201c" + q + "\u201d", l.length ? l : ITEMS.slice(0, 2));
+      $("msg").textContent = "No results. Here they are.";
+    } else if (turns === 4) {
+      const l = find(q);
+      show(results(l.length) + " for \u201c" + q + "\u201d (and 1 more)", l, true);
+      $("msg").textContent = "The first result paid to be there.";
+    } else if (turns === 5) {
+      const l = ITEMS.filter((n) => !n.toLowerCase().includes(q.toLowerCase()));
+      show(results(l.length) + " for everything but \u201c" + q + "\u201d", l);
+      $("msg").textContent = "Searched for the opposite. It seemed more useful.";
+    } else {
+      done = true;
+      $("q").value = "search"; $("q").disabled = true; $("go").disabled = true;
+      show("1 result for \u201csearch\u201d", ["You, looking for something. Found."]);
+      $("msg").textContent = "That was the last go. It searched for itself. Start again if you like.";
+      $("reset").focus();
+    }
+  }
+  function start() {
+    turns = 0; done = false;
+    $("q").value = ""; $("q").disabled = false; $("go").disabled = false;
+    $("how").textContent = "Goes used: 0 of " + TURNS;
+    $("msg").textContent = "";
+    show("Shed contents", ITEMS);
+  }
+  $("sf").addEventListener("submit", (e) => { e.preventDefault(); search(); });
+  $("reset").onclick = () => { start(); $("q").focus(); };
+  $("n").textContent = WORDS[TURNS];
+  start();
+</script>
+</body>
+</html>

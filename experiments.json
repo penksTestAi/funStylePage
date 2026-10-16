@@ -1,5 +1,13 @@
 [
   {
+    "slug": "search-0038",
+    "type": "search",
+    "title": "Search",
+    "blurb": "Find anything in the shed. Every search goes wrong in a new way, and there are six.",
+    "date": "2026-10-16T16:21:49.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A magnifying glass over a row of tiny objects, looking at the wrong one, with a question mark drifting past\">\n    <g class=\"bob\"><rect x=\"24\" y=\"82\" width=\"26\" height=\"20\" rx=\"4\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2.5\"/></g>\n    <rect x=\"62\" y=\"82\" width=\"26\" height=\"20\" rx=\"4\" fill=\"#2bb673\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <g class=\"wobble\"><rect x=\"100\" y=\"82\" width=\"26\" height=\"20\" rx=\"4\" fill=\"#ff5c8a\" stroke=\"currentColor\" stroke-width=\"2.5\"/></g>\n    <rect x=\"138\" y=\"82\" width=\"26\" height=\"20\" rx=\"4\" fill=\"#1a6ef0\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <g class=\"roll\"><circle cx=\"68\" cy=\"44\" r=\"22\" class=\"sheet\" stroke=\"currentColor\" stroke-width=\"3.5\"/><path d=\"M84 60l26 26\" stroke=\"currentColor\" stroke-width=\"6\" stroke-linecap=\"round\"/></g>\n    <g class=\"pulse\"><path d=\"M150 30c0-8 14-8 14 0 0 6-7 6-7 12\" fill=\"none\" stroke=\"#ff5c8a\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"157\" cy=\"50\" r=\"2.5\" fill=\"#ff5c8a\"/></g>\n  </svg>"
+  },
+  {
     "slug": "accordion-0037",
     "type": "accordion",
     "title": "Accordion",

@@ -1,5 +1,13 @@
 [
   {
+    "slug": "toggle-0031",
+    "type": "toggle",
+    "title": "Toggle",
+    "blurb": "Turn it off. It is a setting. It will be back.",
+    "date": "2026-10-16T02:21:35.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A big switch in the off position, with a small hand that keeps flicking it back on\">\n    <g class=\"wobble\"><rect x=\"52\" y=\"34\" width=\"96\" height=\"52\" rx=\"26\" fill=\"#1a6ef0\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <circle cx=\"124\" cy=\"60\" r=\"19\" fill=\"#fff\" stroke=\"currentColor\" stroke-width=\"2.5\"/></g>\n    <g class=\"twitch-l\"><path d=\"M20 98 q14 -22 34 -14 l-4 12 z\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"/></g>\n    <g class=\"pulse\"><circle cx=\"168\" cy=\"26\" r=\"5\" fill=\"#2bb673\" stroke=\"currentColor\" stroke-width=\"1.6\"/></g>\n    <g class=\"pulse d2\"><circle cx=\"180\" cy=\"40\" r=\"3\" fill=\"#2bb673\" stroke=\"currentColor\" stroke-width=\"1.2\"/></g>\n  </svg>"
+  },
+  {
     "slug": "update-0030",
     "type": "update",
     "title": "Update",

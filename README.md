@@ -86,3 +86,4 @@ Then open http://localhost:8000/.
 ## License
 
 [MIT](LICENSE).
+| `toggle` | A settings switch that will not stay off. Switch it off and it comes back on after a shorter wait each time, and a related switch appears (four times). The fifth time it stays off. Mouse or keyboard (Tab, Space or Enter). Nothing is sent or kept. |

@@ -49,6 +49,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `badge` | An app icon with a red notification count. Mark all as read and it goes to 0, then finds a new reason to grow (eight in all; the last one is nothing). Mouse or keyboard. Nothing is sent or kept. |
 | `dropdown` | A country select menu that re-sorts, nests or renames its options each time you open it. Open it enough and it runs out of ideas; pick Chile to finish. Mouse or keyboard. Nothing is sent or kept. |
 | `carousel` | A holiday-photo slideshow. Each swipe, arrow key or button press (a turn) misbehaves in a new way: wrong direction, skipped photos, a repeat, upside down, a lap round the back. The sixth turn ends it. Mouse or keyboard. Nothing is sent or kept. |
+| `tabs` | A tab strip with four sections. Each switch (click, arrow key, Home, End, Enter or Space) misbehaves in a new way: the wrong tab lit, the strip reshuffled, two tabs marked, a tab nobody asked for. The sixth switch merges them all. Mouse or keyboard. Nothing is sent or kept. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 

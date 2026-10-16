@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabs · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .sheet, .hero .tab { fill: var(--paper); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  .strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin: 16px auto 0; max-width: 460px; }
+  .tab { margin: 0; background: var(--soft); color: var(--ink); border-radius: 8px 8px 0 0; box-shadow: inset 0 0 0 2px var(--ink); min-width: 84px; }
+  .tab[aria-selected="true"] { background: var(--accent); color: var(--on-accent); }
+  .tab.ghost2 { box-shadow: inset 0 0 0 2px var(--ink), inset 0 -6px 0 var(--accent); }
+  .tab:focus-visible, button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .panel { max-width: 460px; min-height: 120px; margin: 0 auto 8px; padding: 20px 16px; border: 2px solid var(--ink); border-radius: 0 0 10px 10px; background: var(--soft); display: flex; flex-direction: column; justify-content: center; }
+  .panel:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .panel h2 { font-size: 1.2rem; margin: 0 0 6px; }
+  .panel p { margin: 0; }
+  .panel .also { font-size: .9rem; opacity: .75; margin-top: 8px; }
+  .hop { animation: hop .5s ease-out; } .jolt { animation: jolt .5s; } .fade { animation: fade .6s; }
+  @keyframes hop { from { transform: translateY(-14px); opacity: .3; } }
+  @keyframes jolt { 20% { transform: translateX(-12px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(3px); } }
+  @keyframes fade { from { opacity: 0; } }
+  .how { min-height: 1.6em; font-weight: 700; }
+  button:disabled { opacity: .45; cursor: default; }
+  .msg { min-height: 2.4em; }
+  .hint { font-size: .9rem; opacity: .75; }
+</style>
+</head>
+<body>
+<main>
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A row of folder tabs, one of them sliding out of line, above a blank page">
+    <rect class="sheet" x="24" y="44" width="152" height="66" rx="6" stroke="currentColor" stroke-width="2.5"/>
+    <path d="M24 44V30q0-6 6-6h30q6 0 6 6v14z" fill="#1a6ef0" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+    <g class="bob"><path d="M72 44V30q0-6 6-6h30q6 0 6 6v14z" fill="#ffb020" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></g>
+    <g class="roll"><path d="M120 44V30q0-6 6-6h30q6 0 6 6v14z" fill="#ff5c8a" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></g>
+    <g class="pulse"><circle cx="100" cy="80" r="11" fill="#2bb673" stroke="currentColor" stroke-width="2"/></g>
+  </svg></div>
+<h1>Tabs</h1><p class="blurb" id="blurb">Pick one.</p>
+<div class="how" id="how" aria-live="polite"></div>
+<div class="strip" id="strip" role="tablist" aria-label="Sections"></div>
+<div class="panel" id="panel" role="tabpanel" tabindex="0"></div>
+<div class="msg" id="msg" role="status" aria-live="polite"></div>
+<div class="hint">Click a tab, or Tab to the strip and use the arrow keys, Home, End, Enter or Space. Any of them counts as a switch.</div>
+<div class="row"><button type="button" class="ghost" id="reset">Start again</button></div>
+<a class="back" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function confetti(x, y) {
+    if (calm()) return;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    confetti(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2);
+  });
+
+  const $ = (id) => document.getElementById(id);
+  const TURNS = 6;
+  const BASE = [
+    ["ov", "Overview", "Everything is fine."],
+    ["de", "Details", "There are some."],
+    ["re", "Reviews", "Four stars. Nobody says from whom."],
+    ["co", "Contact", "Please do not."]
+  ];
+  let tabs, hl, content, ghost, turns, anim, extra;
+  const find = (id) => tabs.find((t) => t[0] === id) || BASE.find((t) => t[0] === id);
+  function render(focusId) {
+    $("strip").innerHTML = tabs.map((t) => {
+      const on = t[0] === hl;
+      return '<button type="button" class="tab' + (t[0] === ghost ? " ghost2" : "") + (on && anim ? " " + anim : "") + '" role="tab" id="t-' + t[0] + '" data-id="' + t[0] +
+        '" aria-selected="' + on + '" aria-controls="panel" tabindex="' + (on ? 0 : -1) + '">' + t[1] + "</button>";
+    }).join("");
+    const c = find(content);
+    $("panel").setAttribute("aria-labelledby", "t-" + hl);
+    $("panel").innerHTML = "<h2>" + c[1] + "</h2><p>" + c[2] + "</p>" + (extra ? '<p class="also">' + extra + "</p>" : "");
+    if (focusId) { const el = $("t-" + focusId) || $("strip").querySelector("[tabindex='0']"); if (el) el.focus(); }
+  }
+  function turn(id) {
+    if (turns >= TURNS) return;
+    turns++; extra = ""; ghost = null; anim = "";
+    const i = tabs.findIndex((t) => t[0] === id);
+    const calmAnim = (a) => (calm() ? "" : a);
+    $("how").textContent = "Switches used: " + turns + " of " + TURNS;
+    if (turns === 1) {
+      hl = tabs[(i + 1) % tabs.length][0]; content = id;
+      $("msg").textContent = "Highlighted the one next door.";
+    } else if (turns === 2) {
+      hl = id; content = id; tabs = tabs.slice().reverse(); anim = calmAnim("hop");
+      $("msg").textContent = "Rearranged while you weren't looking.";
+    } else if (turns === 3) {
+      ghost = hl !== id ? hl : null; hl = id; content = id;
+      extra = ghost ? "Previous tab is still underlined, in case you want it back." : "";
+      $("msg").textContent = "Two tabs for the price of one.";
+    } else if (turns === 4) {
+      tabs = tabs.filter((t) => t[0] !== id).concat([find(id)], [["ex", "Also", "You did not ask for this one. It opened anyway."]]);
+      hl = "ex"; content = "ex"; anim = calmAnim("fade");
+      $("msg").textContent = "Added a fifth tab. Moved yours to the end.";
+    } else if (turns === 5) {
+      hl = id; anim = calmAnim("jolt");
+      $("msg").textContent = "Switched. The page stayed where it was.";
+    } else {
+      tabs = [["end", "Tabs", "That was the last switch. The tabs have been merged into this one."]];
+      hl = content = "end"; anim = calmAnim("hop");
+      $("msg").textContent = "No more tabs. Start again if you like.";
+      render();
+      $("reset").focus();
+      return;
+    }
+    render(id);
+  }
+  function start() {
+    tabs = BASE.slice(); hl = content = "ov"; ghost = null; turns = 0; anim = ""; extra = "";
+    $("blurb").textContent = ["Zero", "One", "Two", "Three", "Four", "Five"][BASE.length] + " tabs. Pick one.";
+    $("how").textContent = "Switches used: 0 of " + TURNS;
+    $("msg").textContent = "";
+    render();
+  }
+  $("strip").addEventListener("click", (e) => {
+    const b = e.target.closest(".tab");
+    if (b) turn(b.dataset.id);
+  });
+  $("strip").addEventListener("keydown", (e) => {
+    const cur = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.id : null;
+    const i = tabs.findIndex((t) => t[0] === cur);
+    if (i < 0 || turns >= TURNS) return;
+    let j = null;
+    if (e.key === "ArrowRight") j = (i + 1) % tabs.length;
+    else if (e.key === "ArrowLeft") j = (i - 1 + tabs.length) % tabs.length;
+    else if (e.key === "Home") j = 0;
+    else if (e.key === "End") j = tabs.length - 1;
+    if (j === null) return;
+    e.preventDefault();
+    turn(tabs[j][0]);
+  });
+  $("reset").onclick = () => { start(); $("t-ov").focus(); };
+  start();
+</script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toast · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .sheet, .hero .tab { fill: var(--paper); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  .stage { min-height: 150px; display: grid; place-items: center; margin: 16px 0 8px; }
+  .toast { width: 100%; max-width: 380px; box-sizing: border-box; text-align: left; background: var(--ink); color: var(--paper); border-radius: 10px; padding: 14px 16px; box-shadow: 0 6px 18px rgba(0,0,0,.25); animation: slide .35s ease-out; }
+  @keyframes slide { from { transform: translateY(24px); opacity: 0; } }
+  .toast p { margin: 0 0 12px; line-height: 1.35; }
+  .acts { display: flex; gap: 8px; align-items: center; }
+  .acts.flip { flex-direction: row-reverse; justify-content: flex-end; }
+  .toast button { margin: 0; background: var(--paper); color: var(--ink); }
+  .toast button.tiny { background: none; color: inherit; font-size: .7rem; padding: 2px 4px; text-decoration: underline; opacity: .8; margin-left: auto; }
+  .toast button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .gone { opacity: .6; }
+  .how { min-height: 1.6em; font-weight: 700; }
+  .goal { min-height: 1.6em; font-weight: 700; }
+  .msg { min-height: 2.4em; }
+  .hint { font-size: .9rem; opacity: .75; }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+</style>
+</head>
+<body>
+<main>
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A notification toast with a small close button hopping away from a pointer, and a bell ringing on a shelf">
+    <g class="wobble"><rect x="20" y="30" width="130" height="46" rx="9" fill="#ffb020" stroke="currentColor" stroke-width="2.5"/><path d="M34 46h70M34 58h46" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></g>
+    <g class="roll"><circle cx="150" cy="40" r="11" fill="#ff5c8a" stroke="currentColor" stroke-width="2.5"/><path d="M146 36l8 8M154 36l-8 8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></g>
+    <g class="bob"><path d="M96 96a12 12 0 0 1 24 0v8H96z" fill="#1a6ef0" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><circle cx="108" cy="108" r="3" fill="#2bb673" stroke="currentColor" stroke-width="2"/></g>
+    <g class="pulse"><path d="M170 86l16 16M186 86l-16 16" class="sheet" stroke="#2bb673" stroke-width="4" stroke-linecap="round"/></g>
+  </svg></div>
+<h1>Toast</h1><p class="blurb">A notification would like to be dismissed. Dismiss it. There are <span id="n"></span> of them.</p>
+<div class="how" id="how" aria-live="polite"></div>
+<div class="goal" id="goal"></div>
+<div class="stage" id="stage"></div>
+<div class="msg" id="msg" role="status" aria-live="polite"></div>
+<div class="hint">Click, or Tab and press Enter or Space.</div>
+<div class="row"><button type="button" class="ghost" id="reset">Start again</button></div>
+<a class="back" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function confetti(x, y) {
+    if (calm()) return;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled || b.closest(".toast")) return; // toast buttons celebrate only a real dismissal
+    const r = b.getBoundingClientRect();
+    confetti(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2);
+  });
+
+  const $ = (id) => document.getElementById(id);
+  const WORDS = ["none", "one", "two", "three", "four", "five", "six", "seven", "eight"];
+  const stage = $("stage");
+  let turn, step, dodges, snoozes, timers;
+  const clear = () => { timers.forEach(clearTimeout); timers = []; };
+  const later = (f, ms) => timers.push(setTimeout(f, ms));
+  // Each go: first(), then act(label) per step. A button is [label, handler, extra class].
+  function show(text, btns, focusFirst) {
+    stage.innerHTML = "";
+    const t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "group"); t.setAttribute("aria-label", "Notification");
+    const p = document.createElement("p"); p.textContent = text;
+    const a = document.createElement("div"); a.className = "acts";
+    btns.forEach((d) => {
+      const b = document.createElement("button"); b.type = "button"; b.textContent = d[0]; if (d[2]) b.className = d[2];
+      b.addEventListener("click", (e) => d[1](e.detail === 0, b));
+      if (turn === 0) {
+        const hop = () => { if (d[3] && dodges < 3) { dodges++; a.classList.toggle("flip"); } };
+        b.addEventListener("pointerenter", hop); b.addEventListener("focus", hop);
+      }
+      a.appendChild(b);
+    });
+    t.append(p, a); stage.appendChild(t);
+    if (focusFirst) a.querySelector("button").focus();
+  }
+  const GOES = [
+    { done: "Dismissed. It let you, in the end.",
+      start(k) { show("Storage almost full. (It was always almost full.)", [["Dismiss", (key, b) => win(key, b)], ["Keep", () => $("msg").textContent = "Kept. Nothing was asked.", "", true]], k); } },
+    { done: "Dismissed, from the smallest button. It was there the whole time.",
+      start(k) {
+        const again = (txt, key) => show(txt, [["Snooze", (kk) => snooze(kk), ""], ["Remind me tonight", (kk) => snooze(kk), ""], ["dismiss", (kk, b) => win(kk, b), "tiny"]], key);
+        // The snoozed toast removes the focused button, so the keyboard flag comes back with the toast to keep focus.
+        const snooze = (key) => { snoozes++; stage.innerHTML = ""; $("msg").textContent = "Snoozed."; later(() => { $("msg").textContent = ""; again(snoozes > 1 ? "Back. Missed you. Again." : "Back. Missed you.", key); }, 1400); };
+        again("Update available. Again.", k);
+      } },
+    { done: "Cleared. The count was only ever about the count.",
+      start(k) {
+        const lines = ["You have 1 new notification.", "You have 2 new notifications. One is about the first.", "You have 1 new notification. It is about this one."];
+        const go = (i, key) => show(lines[i], [["Dismiss", (kk, b) => i === 2 ? win(kk, b) : go(i + 1, kk)]], key);
+        go(0, k);
+      } },
+    { done: "Dismissed after three questions. It asked more than you did.",
+      start(k) {
+        show("Dismiss this notification?", [["No", () => $("msg").textContent = "Noted. Still here."], ["Yes", (kk) => {
+          show("Are you sure?", [["Yes", (k2) => {
+            show("Keep this notification?", [["Yes", () => $("msg").textContent = "Kept, as asked."], ["No", (k3, b) => win(k3, b)]], k2);
+          }], ["No", () => $("msg").textContent = "Noted. Still here."]], kk);
+        }]], k);
+      } },
+    { done: "Dismissed. It just went. Suspicious.",
+      start(k) { show("Message sent.", [["Dismiss", (key, b) => win(key, b)]], k); } }
+  ];
+  const TURNS = GOES.length;
+  function label() {
+    $("goal").textContent = turn < TURNS ? "Go " + (turn + 1) + " of " + TURNS + ": dismiss the notification." : "";
+    $("how").textContent = "Dismissed: " + turn + " of " + TURNS;
+  }
+  function win(byKey, b) {
+    clear();
+    const g = GOES[turn];
+    if (b) { const r = b.getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + r.height / 2); }
+    $("msg").textContent = g.done;
+    turn++; dodges = 0; snoozes = 0;
+    label();
+    if (turn >= TURNS) {
+      stage.innerHTML = '<div class="gone">No notifications. For now.</div>';
+      $("goal").textContent = "That was the last one. Nothing is notifying you.";
+      $("reset").focus();
+    } else {
+      GOES[turn].start(byKey);
+    }
+  }
+  function start() {
+    clear(); turn = 0; dodges = 0; snoozes = 0; timers = [];
+    $("msg").textContent = "";
+    label();
+    GOES[0].start(false);
+  }
+  $("reset").onclick = () => { start(); const b = stage.querySelector("button"); if (b) b.focus(); };
+  $("n").textContent = WORDS[TURNS];
+  timers = [];
+  start();
+</script>
+</body>
+</html>

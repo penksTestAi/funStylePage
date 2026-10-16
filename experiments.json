@@ -1,5 +1,13 @@
 [
   {
+    "slug": "carousel-0035",
+    "type": "carousel",
+    "title": "Carousel",
+    "blurb": "Holiday photos. Every swipe goes wrong in a new way, and there are six.",
+    "date": "2026-10-16T10:21:23.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A framed slide with arrows either side, and a row of slides sliding the wrong way\">\n    <rect x=\"50\" y=\"14\" width=\"100\" height=\"70\" rx=\"8\" fill=\"#fff\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <g class=\"roll\"><circle cx=\"100\" cy=\"42\" r=\"12\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2\"/></g>\n    <g class=\"pulse\"><path d=\"M60 78l24-22 18 22z\" fill=\"#2bb673\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"/></g>\n    <g class=\"bob\"><path d=\"M20 49l16-12v24z\" fill=\"#1a6ef0\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"/></g>\n    <g class=\"wobble\"><path d=\"M180 49l-16-12v24z\" fill=\"#ff5c8a\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"/></g>\n    <circle cx=\"88\" cy=\"102\" r=\"5\" fill=\"#1a6ef0\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"100\" cy=\"102\" r=\"5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"112\" cy=\"102\" r=\"5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/>\n  </svg>"
+  },
+  {
     "slug": "dropdown-0034",
     "type": "dropdown",
     "title": "Dropdown",

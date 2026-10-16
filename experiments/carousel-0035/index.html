@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carousel · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .sheet, .hero .tab { fill: var(--paper); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+
+  .stage { position: relative; max-width: 420px; height: 250px; margin: 12px auto 8px; border: 2px solid var(--ink); border-radius: 10px; background: var(--soft); overflow: hidden; touch-action: pan-y; user-select: none; }
+  .stage:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .slide { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; }
+  .slide svg { width: 82%; height: auto; color: var(--ink); }
+  .slide .cap { font-weight: 700; margin-top: 6px; }
+  .slide.end { background: var(--paper); font-size: 1.1rem; padding: 24px; }
+  .in-r { animation: inr .45s ease-out; } .in-l { animation: inl .45s ease-out; }
+  .shake { animation: shake .5s; } .flip { animation: flip .6s ease-out; } .lap { animation: lap 1s ease-in-out; }
+  @keyframes inr { from { transform: translateX(100%); } } @keyframes inl { from { transform: translateX(-100%); } }
+  @keyframes shake { 20% { transform: translateX(-18px); } 40% { transform: translateX(16px); } 60% { transform: translateX(-10px); } 80% { transform: translateX(6px); } }
+  @keyframes flip { from { transform: rotate(-180deg) scale(.4); } }
+  @keyframes lap { 0% { transform: scale(.1); } 50% { transform: scale(.1) translateX(300%); } 100% { transform: none; } }
+  .upside svg, .upside .cap { transform: rotate(180deg); }
+  .dots { display: flex; justify-content: center; gap: 6px; margin: 8px 0; min-height: 14px; }
+  .dots i { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--ink); }
+  .dots i.on { background: var(--accent); }
+  .how { min-height: 1.6em; font-weight: 700; }
+  .count { font-size: .9rem; opacity: .75; font-variant-numeric: tabular-nums; }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  button:disabled { opacity: .45; cursor: default; }
+  .msg { min-height: 2.4em; }
+  .hint { font-size: .9rem; opacity: .75; }
+</style>
+</head>
+<body>
+<main>
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A framed slide with arrows either side, and a row of slides sliding the wrong way">
+    <rect class="sheet" x="50" y="14" width="100" height="70" rx="8"  stroke="currentColor" stroke-width="2.5"/>
+    <g class="roll"><circle cx="100" cy="42" r="12" fill="#ffb020" stroke="currentColor" stroke-width="2"/></g>
+    <g class="pulse"><path d="M60 78l24-22 18 22z" fill="#2bb673" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></g>
+    <g class="bob"><path d="M20 49l16-12v24z" fill="#1a6ef0" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></g>
+    <g class="wobble"><path d="M180 49l-16-12v24z" fill="#ff5c8a" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></g>
+    <circle cx="88" cy="102" r="5" fill="#1a6ef0" stroke="currentColor" stroke-width="2"/><circle cx="100" cy="102" r="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="112" cy="102" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+  </svg></div>
+<h1>Carousel</h1><p class="blurb">Holiday photos. Swipe to see the next one.</p>
+<div class="how" id="how" aria-live="polite"></div>
+<div class="stage" id="stage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Holiday photos"></div>
+<div class="dots" id="dots" aria-hidden="true"></div>
+<div class="count" id="count"></div>
+<div class="row"><button type="button" id="prev">&larr; Previous</button><button type="button" id="next">Next &rarr;</button></div>
+<div class="msg" id="msg" role="status" aria-live="polite"></div>
+<div class="hint">Swipe or drag the photo, or Tab to it and use the arrow keys, or press the buttons. Any of them counts as a turn.</div>
+<div class="row"><button type="button" class="ghost" id="reset">Start again</button></div>
+<a class="back" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function confetti(x, y) {
+    if (calm()) return;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    confetti(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2);
+  });
+
+  const $ = (id) => document.getElementById(id);
+  const stage = $("stage"), TURNS = 6;
+  const SCENES = [
+    ["Beach", '<circle cx="150" cy="28" r="14" fill="#ffb020" stroke="currentColor" stroke-width="2.5"/><path d="M0 70q25-12 50 0t50 0 50 0 50 0v50H0z" fill="#1a6ef0" stroke="currentColor" stroke-width="2.5"/>'],
+    ["Mountain", '<path d="M10 110l55-80 35 45 25-30 65 65z" fill="#2bb673" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M52 50l13-20 13 20z" fill="#fff" stroke="currentColor" stroke-width="2"/>'],
+    ["Cafe", '<path d="M60 40h70v40q0 18-35 18t-35-18z" fill="#ff5c8a" stroke="currentColor" stroke-width="2.5"/><path d="M130 52h14q10 0 10 12t-10 12h-14" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M85 30q-5-8 0-14M105 30q-5-8 0-14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>'],
+    ["Tent", '<path d="M30 105l70-80 70 80z" fill="#ffb020" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M100 105l-18-40h36z" fill="#fff" stroke="currentColor" stroke-width="2"/>'],
+    ["Sunset", '<circle cx="100" cy="85" r="30" fill="#ff5c8a" stroke="currentColor" stroke-width="2.5"/><rect x="0" y="85" width="200" height="35" fill="#1a6ef0" stroke="currentColor" stroke-width="2.5"/>']
+  ];
+  // [slide shown, animation, extra class, counter text or null, note]
+  const SCRIPT = [
+    [4, "in-l", "", null, "Wrong way. Considered, then done."],
+    [1, "in-r", "", null, "Skipped one. It was fine."],
+    [1, "shake", "", null, "Same photo. It liked it here."],
+    [2, "flip", "upside", null, "Rotated for variety."],
+    [3, "lap", "", "Photo 14 of 5", "It went round the back first."]
+  ];
+  let turns = 0, shown = 0;
+  function slideHTML(i, cls, anim) {
+    return '<div class="slide ' + cls + " " + anim + '"><svg viewBox="0 0 200 120" aria-hidden="true">' + SCENES[i][1] + '</svg><div class="cap">' + SCENES[i][0] + "</div></div>";
+  }
+  function dots(n) {
+    $("dots").innerHTML = SCENES.map((_, i) => '<i class="' + (i === n ? "on" : "") + '"></i>').join("");
+  }
+  function show(i, anim, cls, counter) {
+    stage.innerHTML = slideHTML(i, cls, anim);
+    stage.setAttribute("aria-label", "Holiday photos: " + SCENES[i][0]);
+    shown = i; dots(i);
+    $("count").textContent = counter || "Photo " + (i + 1) + " of " + SCENES.length;
+  }
+  function turn() {
+    if (turns >= TURNS) return;
+    turns++;
+    $("how").textContent = "Turns used: " + turns + " of " + TURNS;
+    if (turns < TURNS) {
+      const s = SCRIPT[turns - 1];
+      show(s[0], calm() ? "" : s[1], s[2], s[3]);
+      $("msg").textContent = s[4];
+    } else {
+      stage.innerHTML = '<div class="slide end">That was the last turn.<br>There are no more photos. There were never more than ' + SCENES.length + '.</div>';
+      stage.setAttribute("aria-label", "Holiday photos: finished");
+      $("dots").innerHTML = ""; $("count").textContent = "";
+      $("msg").textContent = "The slideshow is over. Start again if you like.";
+      $("prev").disabled = $("next").disabled = true;
+      $("reset").focus();
+    }
+  }
+  $("prev").onclick = turn; $("next").onclick = turn;
+  stage.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); turn(); }
+  });
+  let x0 = null;
+  stage.addEventListener("pointerdown", (e) => { x0 = e.clientX; });
+  stage.addEventListener("pointerup", (e) => { if (x0 !== null && Math.abs(e.clientX - x0) > 40) turn(); x0 = null; });
+  stage.addEventListener("pointercancel", () => { x0 = null; });
+  function start() {
+    turns = 0; $("prev").disabled = $("next").disabled = false;
+    $("how").textContent = "Turns used: 0 of " + TURNS;
+    show(0, "", "", null);
+    $("msg").textContent = "";
+  }
+  $("reset").onclick = start;
+  start();
+</script>
+</body>
+</html>

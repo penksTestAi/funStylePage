@@ -48,6 +48,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `update` | A "Restart to update" prompt. "Remind me later" offers fewer and smaller options each time, until only "Restart now" is left (five prompts in all). Mouse or keyboard. Nothing is sent or kept. |
 | `badge` | An app icon with a red notification count. Mark all as read and it goes to 0, then finds a new reason to grow (eight in all; the last one is nothing). Mouse or keyboard. Nothing is sent or kept. |
 | `dropdown` | A country select menu that re-sorts, nests or renames its options each time you open it. Open it enough and it runs out of ideas; pick Chile to finish. Mouse or keyboard. Nothing is sent or kept. |
+| `carousel` | A holiday-photo slideshow. Each swipe, arrow key or button press (a turn) misbehaves in a new way: wrong direction, skipped photos, a repeat, upside down, a lap round the back. The sixth turn ends it. Mouse or keyboard. Nothing is sent or kept. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 

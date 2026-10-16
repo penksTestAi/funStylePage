@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dropdown · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .sheet, .hero .tab { fill: var(--paper); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+
+  .field { max-width: 360px; margin: 16px auto 8px; text-align: left; position: relative; }
+  .field label { display: block; font-weight: 700; margin-bottom: 6px; }
+  .trigger { display: flex; width: 100%; justify-content: space-between; align-items: center; margin: 0; background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); text-align: left; }
+  .menu { list-style: none; margin: 6px 0 0; padding: 4px; background: var(--paper); border: 2px solid var(--ink); border-radius: 8px; position: absolute; left: 0; right: 0; z-index: 5; box-shadow: 0 6px 16px rgba(0,0,0,.25); }
+  .menu[hidden] { display: none; }
+  .menu li { padding: 10px 12px; border-radius: 6px; cursor: pointer; }
+  .menu li.sub { padding-left: 28px; }
+  .menu li.sub2 { padding-left: 44px; }
+  .menu li.grp { font-weight: 700; }
+  .menu li.act { background: var(--accent); color: var(--on-accent); }
+  .how { min-height: 1.6em; font-weight: 700; }
+  .opens { font-size: .9rem; opacity: .75; }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .msg { min-height: 2.4em; margin-top: 150px; }
+  .hint { font-size: .9rem; opacity: .75; }
+</style>
+</head>
+<body>
+<main>
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A select box with its menu open, rows that keep swapping places, and a small arrow">
+    <rect class="sheet" x="30" y="10" width="140" height="24" rx="6" stroke="currentColor" stroke-width="2.5"/>
+    <path d="M148 19l8 8 8-8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <rect class="sheet" x="30" y="38" width="140" height="74" rx="6" stroke="currentColor" stroke-width="2.5"/>
+    <g class="roll"><rect x="40" y="46" width="60" height="14" rx="4" fill="#1a6ef0" stroke="currentColor" stroke-width="2"/></g>
+    <g class="pulse"><rect x="40" y="68" width="80" height="14" rx="4" fill="#ff5c8a" stroke="currentColor" stroke-width="2"/></g>
+    <g class="bob"><rect x="40" y="90" width="70" height="14" rx="4" fill="#2bb673" stroke="currentColor" stroke-width="2"/></g>
+    <g class="wobble"><path d="M150 84l14 8-6 2 4 8-4 2-4-8-5 4z" fill="#ffb020" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></g>
+  </svg></div>
+<h1>Dropdown</h1><p class="blurb">Country of birth. Please select. Again.</p>
+<div class="how" id="how" aria-live="polite">Menu mood: not opened yet</div>
+<div class="field">
+  <label id="lab">Country of birth (Chile)</label>
+  <button type="button" class="trigger" id="trig" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="menu" aria-labelledby="lab val"><span id="val">Please select</span><span aria-hidden="true">&#9662;</span></button>
+  <ul class="menu" id="menu" role="listbox" aria-labelledby="lab" tabindex="-1" hidden></ul>
+</div>
+<div class="opens" id="opens"></div>
+<div class="msg" id="msg" role="status" aria-live="polite"></div>
+<div class="hint">Click, or Tab to the box, press Enter or Down, use the arrow keys, press Enter. Escape closes.</div>
+<div class="row"><button type="button" class="ghost" id="reset">Start again</button></div>
+<a class="back" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function confetti(x, y) {
+    if (calm()) return;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    confetti(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2);
+  });
+
+  const $ = (id) => document.getElementById(id);
+  const C = [["chile","Chile"],["chad","Chad"],["china","China"],["cuba","Cuba"],["canada","Canada"],["cyprus","Cyprus"]];
+  const NAME = Object.fromEntries(C);
+  const trig = $("trig"), menu = $("menu");
+  let opens = 0, open = false, won = false, rows = [], act = 0, expanded = new Set(), picked = null;
+  const sr = (t) => { $("msg").textContent = t; };
+  const L = (id) => NAME[id];
+  // each mode returns rows: {id?, label, depth, group?, kids?}
+  function leaf(id, label, depth) { return { id, label: label || L(id), depth: depth || 0 }; }
+  function build(n) {
+    const ids = C.map((c) => c[0]);
+    if (n === 1) return ["Sorted by last letter", ids.slice().sort((a, b) => L(a).slice(-1).localeCompare(L(b).slice(-1)) || a.localeCompare(b)).map((i) => leaf(i))];
+    if (n === 2) {
+      const g = (name, list) => ({ group: name, depth: 0, kids: list.map((i) => leaf(i, null, 1)) });
+      return ["Nested by length", [g("Four letters", ["chad", "cuba"]), g("Five letters", ["chile", "china"]), g("Six letters", ["canada", "cyprus"])]];
+    }
+    if (n === 3) {
+      const o = ["cuba", "chile", "cyprus", "chad", "canada", "china"];
+      return ["Renamed for clarity", o.map((i, k) => leaf(i, "Option " + (k + 1) + " (was " + L(i) + ")"))];
+    }
+    if (n === 4) {
+      const swap = { chile: "Chad", chad: "Chile", china: "Cuba", cuba: "China", canada: "Cyprus", cyprus: "Canada" };
+      return ["Names swapped, in pairs", ids.slice().reverse().map((i) => leaf(i, swap[i] + " (was " + L(i) + ")"))];
+    }
+    if (n === 5) {
+      const g = (name, kids) => ({ group: name, depth: 0, kids });
+      return ["Nested, twice", [g("Countries", [g("Starting with C", [g("Hot", [leaf("chad", null, 3), leaf("cuba", null, 3), leaf("cyprus", null, 3)]), g("Not hot", [leaf("canada", null, 3), leaf("chile", null, 3), leaf("china", null, 3)])])])]];
+    }
+    return ["Out of ideas", ids.slice().sort((a, b) => L(a).localeCompare(L(b))).map((i) => leaf(i))];
+  }
+  function flat(list, depth, out) {
+    list.forEach((r) => {
+      r.depth = depth; out.push(r);
+      if (r.kids && expanded.has(r.group)) flat(r.kids, depth + 1, out);
+    });
+    return out;
+  }
+  let tree = [];
+  function paint() {
+    rows = flat(tree, 0, []);
+    menu.textContent = "";
+    rows.forEach((r, i) => {
+      const li = document.createElement("li");
+      li.id = "o" + i; li.setAttribute("role", "option");
+      li.className = (r.kids ? "grp " : "") + (r.depth === 1 ? "sub " : r.depth >= 2 ? "sub2 " : "") + (i === act ? "act" : "");
+      li.setAttribute("aria-selected", i === act ? "true" : "false");
+      if (r.kids) li.setAttribute("aria-expanded", expanded.has(r.group) ? "true" : "false");
+      li.textContent = r.kids ? (expanded.has(r.group) ? "v " : "> ") + r.group : r.label;
+      li.addEventListener("mousedown", (e) => e.preventDefault());
+      li.addEventListener("click", (e) => { e.stopPropagation(); act = i; choose(); });
+      menu.appendChild(li);
+    });
+    trig.setAttribute("aria-activedescendant", "o" + act);
+    const a = $("o" + act); if (a && a.scrollIntoView) a.scrollIntoView({ block: "nearest" });
+  }
+  function openMenu() {
+    if (open || won) return;
+    opens++;
+    const [mood, t] = build(Math.min(opens, 6));
+    tree = t; expanded = new Set(); act = 0; open = true;
+    menu.hidden = false; trig.setAttribute("aria-expanded", "true");
+    $("how").textContent = "Menu mood: " + mood;
+    $("opens").textContent = "Opened " + opens + (opens === 1 ? " time" : " times");
+    paint();
+    sr(opens >= 6 ? "Fine. Alphabetical. The menu has run out of ideas." : "Menu opened. It looks different from last time.");
+  }
+  function closeMenu() { open = false; menu.hidden = true; trig.setAttribute("aria-expanded", "false"); trig.removeAttribute("aria-activedescendant"); }
+  function choose() {
+    const r = rows[act];
+    if (!r) return;
+    if (r.kids) { if (expanded.has(r.group)) expanded.delete(r.group); else expanded.add(r.group); paint(); return; }
+    picked = r.id;
+    $("val").textContent = r.label;
+    closeMenu();
+    if (r.id === "chile") {
+      won = true;
+      $("how").textContent = "Menu mood: satisfied";
+      sr("Chile. Saved. The menu will not remember how.");
+      const b = trig.getBoundingClientRect(); confetti(b.left + b.width / 2, b.top);
+    } else {
+      sr(L(r.id) + " is not where you were born. Open the menu again; it will not look the same.");
+    }
+    trig.focus();
+  }
+  trig.addEventListener("click", () => { if (open) closeMenu(); else openMenu(); });
+  trig.addEventListener("keydown", (e) => {
+    if (!open) { if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); openMenu(); } return; }
+    const k = e.key;
+    if (k === "ArrowDown") { e.preventDefault(); act = Math.min(rows.length - 1, act + 1); paint(); }
+    else if (k === "ArrowUp") { e.preventDefault(); act = Math.max(0, act - 1); paint(); }
+    else if (k === "Home") { e.preventDefault(); act = 0; paint(); }
+    else if (k === "End") { e.preventDefault(); act = rows.length - 1; paint(); }
+    else if (k === "ArrowRight" && rows[act] && rows[act].kids && !expanded.has(rows[act].group)) { e.preventDefault(); choose(); }
+    else if (k === "ArrowLeft" && rows[act] && rows[act].kids && expanded.has(rows[act].group)) { e.preventDefault(); choose(); }
+    else if (k === "Enter" || k === " ") { e.preventDefault(); choose(); }
+    else if (k === "Escape") { e.preventDefault(); closeMenu(); }
+    else if (k === "Tab") closeMenu();
+  });
+  document.addEventListener("click", (e) => { if (open && !e.target.closest(".field")) closeMenu(); });
+  function start() {
+    opens = 0; won = false; picked = null; closeMenu();
+    $("val").textContent = "Please select";
+    $("how").textContent = "Menu mood: not opened yet";
+    $("opens").textContent = "Opened 0 times";
+    sr("");
+  }
+  $("reset").onclick = start;
+  start();
+</script>
+</body>
+</html>

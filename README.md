@@ -47,6 +47,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `unsubscribe` | An email-preferences page. Press Unsubscribe and it finds another list you are still on (ten in all, under stranger names). The last press ends it. Mouse or keyboard. Nothing is sent or kept. |
 | `update` | A "Restart to update" prompt. "Remind me later" offers fewer and smaller options each time, until only "Restart now" is left (five prompts in all). Mouse or keyboard. Nothing is sent or kept. |
 | `badge` | An app icon with a red notification count. Mark all as read and it goes to 0, then finds a new reason to grow (eight in all; the last one is nothing). Mouse or keyboard. Nothing is sent or kept. |
+| `dropdown` | A country select menu that re-sorts, nests or renames its options each time you open it. Open it enough and it runs out of ideas; pick Chile to finish. Mouse or keyboard. Nothing is sent or kept. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 

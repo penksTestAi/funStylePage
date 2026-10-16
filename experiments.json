@@ -1,5 +1,13 @@
 [
   {
+    "slug": "accordion-0037",
+    "type": "accordion",
+    "title": "Accordion",
+    "blurb": "Frequently asked questions. Every open goes wrong in a new way, and there are six.",
+    "date": "2026-10-16T14:22:45.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A stack of three folded panels, the middle one popping open with a tiny arrow nobody asked for\">\n    <rect class=\"sheet\" x=\"30\" y=\"14\" width=\"140\" height=\"22\" rx=\"5\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <g class=\"bob\"><rect x=\"30\" y=\"44\" width=\"140\" height=\"22\" rx=\"5\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2.5\"/></g>\n    <g class=\"wobble\"><rect class=\"sheet\" x=\"38\" y=\"70\" width=\"124\" height=\"14\" rx=\"3\" stroke=\"currentColor\" stroke-width=\"2\"/></g>\n    <rect x=\"30\" y=\"90\" width=\"140\" height=\"22\" rx=\"5\" fill=\"#1a6ef0\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <g class=\"pulse\"><path d=\"M150 50l8 10 8-10z\" fill=\"#ff5c8a\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\" transform=\"translate(-20 0)\"/></g>\n    <g class=\"roll\"><circle cx=\"48\" cy=\"25\" r=\"4\" fill=\"#2bb673\" stroke=\"currentColor\" stroke-width=\"2\"/></g>\n  </svg>"
+  },
+  {
     "slug": "tabs-0036",
     "type": "tabs",
     "title": "Tabs",

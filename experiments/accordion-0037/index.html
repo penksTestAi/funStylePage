@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accordion · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .sheet, .hero .tab { fill: var(--paper); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  .strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin: 16px auto 0; max-width: 460px; }
+  .tab { margin: 0; background: var(--soft); color: var(--ink); border-radius: 8px 8px 0 0; box-shadow: inset 0 0 0 2px var(--ink); min-width: 84px; }
+  .tab[aria-selected="true"] { background: var(--accent); color: var(--on-accent); }
+  .tab.ghost2 { box-shadow: inset 0 0 0 2px var(--ink), inset 0 -6px 0 var(--accent); }
+  .tab:focus-visible, button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .panel { max-width: 460px; min-height: 120px; margin: 0 auto 8px; padding: 20px 16px; border: 2px solid var(--ink); border-radius: 0 0 10px 10px; background: var(--soft); display: flex; flex-direction: column; justify-content: center; }
+  .panel:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .panel h2 { font-size: 1.2rem; margin: 0 0 6px; }
+  .panel p { margin: 0; }
+  .panel .also { font-size: .9rem; opacity: .75; margin-top: 8px; }
+  .hop { animation: hop .5s ease-out; } .jolt { animation: jolt .5s; } .fade { animation: fade .6s; }
+  @keyframes hop { from { transform: translateY(-14px); opacity: .3; } }
+  @keyframes jolt { 20% { transform: translateX(-12px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(3px); } }
+  @keyframes fade { from { opacity: 0; } }
+  .how { min-height: 1.6em; font-weight: 700; }
+  button:disabled { opacity: .45; cursor: default; }
+  .msg { min-height: 2.4em; }
+  .hint { font-size: .9rem; opacity: .75; }
+  .acc { max-width: 460px; margin: 16px auto 8px; text-align: left; }
+  .acc .item { border: 2px solid var(--ink); border-radius: 8px; margin: 6px 0; background: var(--soft); }
+  .acc .item.in { margin-left: 18px; }
+  .acc h2 { margin: 0; font-size: 1.05rem; }
+  .acc .head { display: flex; justify-content: space-between; width: 100%; margin: 0; background: transparent; color: var(--ink); border-radius: 6px; padding: 12px 14px; text-align: left; font-weight: 700; }
+  .acc .head::after { content: "+"; }
+  .acc .head[aria-expanded="true"]::after { content: "\2212"; }
+  .acc .body { padding: 0 14px 14px; }
+  .acc .body p { margin: 0; }
+  .acc .pad { height: 140px; }
+  .head:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A stack of three folded panels, the middle one popping open with a tiny arrow nobody asked for">
+    <rect class="sheet" x="30" y="14" width="140" height="22" rx="5" stroke="currentColor" stroke-width="2.5"/>
+    <g class="bob"><rect x="30" y="44" width="140" height="22" rx="5" fill="#ffb020" stroke="currentColor" stroke-width="2.5"/></g>
+    <g class="wobble"><rect class="sheet" x="38" y="70" width="124" height="14" rx="3" stroke="currentColor" stroke-width="2"/></g>
+    <rect x="30" y="90" width="140" height="22" rx="5" fill="#1a6ef0" stroke="currentColor" stroke-width="2.5"/>
+    <g class="pulse"><path d="M150 50l8 10 8-10z" fill="#ff5c8a" stroke="currentColor" stroke-width="2" stroke-linejoin="round" transform="translate(-20 0)"/></g>
+    <g class="roll"><circle cx="48" cy="25" r="4" fill="#2bb673" stroke="currentColor" stroke-width="2"/></g>
+  </svg></div>
+<h1>Accordion</h1><p class="blurb" id="blurb">Frequently asked questions.</p>
+<div class="how" id="how" aria-live="polite"></div>
+<div class="acc" id="acc"></div>
+<div class="msg" id="msg" role="status" aria-live="polite"></div>
+<div class="hint">Click a heading, or Tab to it and press Enter or Space. Up, Down, Home and End move between headings. Opening or closing counts as a go.</div>
+<div class="row"><button type="button" class="ghost" id="reset">Start again</button></div>
+<a class="back" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function confetti(x, y) {
+    if (calm()) return;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    confetti(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2);
+  });
+
+  const $ = (id) => document.getElementById(id);
+  const TURNS = 6;
+  const BASE = [
+    ["a", "Is this normal?", "Yes."],
+    ["b", "Who is responsible?", "Someone, probably."],
+    ["c", "Can I get a refund?", "For what."],
+    ["d", "How do I close this?", "Gently."]
+  ];
+  let items, open, turns, pad, nested, done;
+  function render(focusId) {
+    $("acc").innerHTML = items.map((t) => {
+      const on = open.has(t[0]);
+      return '<div class="item' + (t[3] ? " in" : "") + '"><h2><button type="button" class="head" id="h-' + t[0] + '" data-id="' + t[0] + '" aria-expanded="' + on + '" aria-controls="p-' + t[0] + '">' + t[1] + '</button></h2>' +
+        '<div class="body" id="p-' + t[0] + '" role="region" aria-labelledby="h-' + t[0] + '"' + (on ? "" : " hidden") + '><p>' + t[2] + "</p>" + (on && pad === t[0] ? '<div class="pad"></div>' : "") + "</div></div>";
+    }).join("");
+    if (focusId) { const el = $("h-" + focusId); if (el) el.focus(); }
+  }
+  let timer = null;
+  function go(id) {
+    clearTimeout(timer);
+    if (turns >= TURNS || done) return;
+    turns++;
+    const i = items.findIndex((t) => t[0] === id);
+    pad = null;
+    $("how").textContent = "Goes used: " + turns + " of " + TURNS;
+    if (turns === 1) {
+      const nb = items[(i + 1) % items.length][0];
+      open = new Set([nb]);
+      $("msg").textContent = "Opened the one below. It was closer.";
+    } else if (turns === 2) {
+      open = new Set([id]); pad = id;
+      $("msg").textContent = "Opened. Most of it is padding.";
+    } else if (turns === 3) {
+      open = new Set([id]);
+      $("msg").textContent = "Opened. Reconsidering.";
+      render(id);
+      timer = setTimeout(() => { timer = null; open = new Set(); $("msg").textContent = "Closed again. It had second thoughts."; render(id); }, 900);
+      return;
+    } else if (turns === 4) {
+      open = new Set(items.map((t) => t[0]).filter((x) => x !== id));
+      $("msg").textContent = "Opened every one except yours.";
+    } else if (turns === 5) {
+      items = items.slice(); items.splice(i + 1, 0, ["n", "More questions", "Questions about the questions.", true]);
+      open = new Set([id, "n"]);
+      $("msg").textContent = "Added a section inside the section.";
+    } else {
+      items = [["z", "Everything", "That was the last go. The sections have been merged into this one."]];
+      open = new Set(["z"]); done = true;
+      $("msg").textContent = "No more sections. Start again if you like.";
+      render();
+      $("reset").focus();
+      return;
+    }
+    render(id);
+  }
+  function start() {
+    clearTimeout(timer);
+    items = BASE.slice(); open = new Set(); turns = 0; pad = null; done = false;
+    $("how").textContent = "Goes used: 0 of " + TURNS;
+    $("msg").textContent = "";
+    render();
+  }
+  $("acc").addEventListener("click", (e) => {
+    const b = e.target.closest(".head");
+    if (b) go(b.dataset.id);
+  });
+  $("acc").addEventListener("keydown", (e) => {
+    const cur = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.id : null;
+    const i = items.findIndex((t) => t[0] === cur);
+    if (i < 0) return;
+    let j = null;
+    if (e.key === "ArrowDown") j = (i + 1) % items.length;
+    else if (e.key === "ArrowUp") j = (i - 1 + items.length) % items.length;
+    else if (e.key === "Home") j = 0;
+    else if (e.key === "End") j = items.length - 1;
+    if (j === null) return;
+    e.preventDefault();
+    $("h-" + items[j][0]).focus();
+  });
+  $("reset").onclick = () => { start(); $("h-a").focus(); };
+  start();
+</script>
+</body>
+</html>

@@ -52,6 +52,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `tabs` | A tab strip with four sections. Each switch (click, arrow key, Home, End, Enter or Space) misbehaves in a new way: the wrong tab lit, the strip reshuffled, two tabs marked, a tab nobody asked for. The sixth switch merges them all. Mouse or keyboard. Nothing is sent or kept. |
 | `accordion` | A FAQ with four sections. Each open or close (click, Enter or Space on a heading) misbehaves in a new way: the neighbour opens, a wall of padding, an instant change of heart, everything but yours, a section inside a section. The sixth go folds the lot into one. Nothing is sent anywhere. |
 | `search` | A search box over a shed of eight things. Each search (Enter or the button) misbehaves in a new way: the last letter dropped, a different word searched, zero results listed anyway, a paid first result, the opposite searched. The sixth search finds you. Mouse or keyboard. Nothing is sent or kept. |
+| `tooltip` | Three toolbar buttons and a hint for each, and the hint misbehaves: it arrives late, sits on the button it describes, points at the neighbour, leaves while you read, repeats the label, and once is simply correct (six goes). Press the button asked for. Mouse or keyboard (Tab, Enter or Space). Nothing is sent or kept. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.
 

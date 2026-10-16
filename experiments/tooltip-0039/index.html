@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .sheet, .hero .tab { fill: var(--paper); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  .bar { display: flex; justify-content: center; gap: 16px; margin: 24px auto 8px; position: relative; }
+  .tb { position: relative; display: inline-block; }
+  .tb button { width: 64px; height: 64px; padding: 0; margin: 0; display: grid; place-items: center; }
+  .tb svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linejoin: round; }
+  .tip { position: absolute; z-index: 5; left: 50%; width: max-content; max-width: 220px; transform: translateX(-50%); padding: 8px 10px; background: var(--ink); color: var(--paper); border-radius: 6px; font-size: .85rem; line-height: 1.3; text-align: left; pointer-events: none; }
+  .tip[hidden] { display: none; }
+  .tip.under { top: 72px; }
+  .tip.over { top: 0; height: 64px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; text-align: center; }
+  .tip.under::before { content: ""; position: absolute; top: -6px; left: var(--ax, 50%); margin-left: -6px; border: 6px solid transparent; border-top: 0; border-bottom-color: var(--ink); }
+  .goal { min-height: 3.2em; font-weight: 700; }
+  .how { min-height: 1.6em; font-weight: 700; }
+  .msg { min-height: 2.4em; }
+  .hint { font-size: .9rem; opacity: .75; }
+  button:disabled { opacity: .45; cursor: default; }
+  .tb button:focus-visible, button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+</style>
+</head>
+<body>
+<main>
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A button with a speech-bubble hint beside it, the bubble's tail pointing at an empty patch of wall, and a small clock ticking late">
+    <g class="bob"><rect x="22" y="58" width="40" height="40" rx="8" fill="#1a6ef0" stroke="currentColor" stroke-width="2.5"/></g>
+    <g class="wobble"><rect x="86" y="22" width="92" height="30" rx="7" fill="#ffb020" stroke="currentColor" stroke-width="2.5"/><path d="M150 52l8 14 4-14z" fill="#ffb020" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M98 34h50M98 42h32" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></g>
+    <rect x="130" y="80" width="26" height="22" rx="4" fill="#2bb673" stroke="currentColor" stroke-width="2.5"/>
+    <g class="pulse"><circle cx="82" cy="94" r="11" class="sheet" stroke="currentColor" stroke-width="2.5"/><g class="spin"><path d="M82 94V87" stroke="#ff5c8a" stroke-width="3" stroke-linecap="round"/></g></g>
+  </svg></div>
+<h1>Tooltip</h1><p class="blurb" id="blurb">Hover over a button to find out what it does. The hint has views of its own, and there are <span id="n"></span> goes.</p>
+<div class="how" id="how" aria-live="polite"></div>
+<div class="goal" id="goal" aria-live="polite"></div>
+<div class="bar" id="bar" role="group" aria-label="Toolbar"></div>
+<div class="msg" id="msg" role="status" aria-live="polite"></div>
+<div class="hint">Hover or Tab to a button for its hint, then press the one asked for with a click, Enter or Space. Each right press counts as a go.</div>
+<div class="row"><button type="button" class="ghost" id="reset">Start again</button></div>
+<a class="back" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function confetti(x, y) {
+    if (calm()) return;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled || b.closest(".tb")) return; // bar buttons celebrate only a right press, in press()
+    const r = b.getBoundingClientRect();
+    confetti(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2);
+  });
+
+  const $ = (id) => document.getElementById(id);
+  const WORDS = ["none", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+  const LATE_MS = 2500;   // how late the late hint is
+  const MS_PER_WORD = 90; // how long the vanishing hint stays, per word
+  const ICONS = [
+    '<svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="9"/></svg>',
+    '<svg viewBox="0 0 28 28" aria-hidden="true"><rect x="5" y="5" width="18" height="18" rx="2"/></svg>',
+    '<svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 4L24 23H4z"/></svg>'
+  ];
+  // mode: late, cover, wrong, vanish, plain, right. goal: the button the go asks for.
+  const GOES = [
+    { mode: "late", goal: 1, items: [["Rewind", "Goes back one step."], ["Pause", "Stops everything except this."], ["Tidy", "Puts things away."]],
+      done: "Paused. The hint turned up later, for the next button." },
+    { mode: "cover", goal: 1, items: [["Mute", "Silences the room."], ["Zoom", "Makes things bigger."], ["Lock", "Keeps others out."]],
+      done: "Zoomed. The hint sat on the button the whole time." },
+    { mode: "wrong", goal: 1, items: [["Copy", "Makes another one."], ["Paste", "Puts the other one here."], ["Cut", "Makes there less of it."]],
+      done: "Pasted. The arrow was looking at the neighbour." },
+    { mode: "vanish", goal: 0, items: [["Undo", "Takes back the last thing."], ["Redo", "Does the undone thing again."], ["Repeat", "Does it, and then again."]],
+      done: "Undone. The hint left as you started on its second word." },
+    { mode: "plain", goal: 2, items: [["Home", "Home. Goes home."], ["Back", "Back. Goes back."], ["Forward", "Forward. Goes forward."]],
+      done: "Forward. The hint said so, in a way." },
+    { mode: "right", goal: 2, items: [["Open", "Opens things."], ["Close", "Closes things."], ["Done", "Ends this. This hint is correct."]],
+      done: "Done. On time, in place, pointing the right way, and readable. It felt wrong." }
+  ];
+  const TURNS = GOES.length;
+  const wordsIn = (s) => s.split(/\s+/).length;
+  let turn, tips, timers;
+  function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+  function hideTips() { clearTimers(); tips.forEach((t) => { t.hidden = true; }); }
+  function showTip(i) {
+    const g = GOES[turn];
+    if (!g) return;
+    hideTips();
+    const t = tips[i];
+    const fire = () => {
+      const n = g.items.length;
+      t.className = "tip " + (g.mode === "cover" ? "over" : "under");
+      t.style.removeProperty("--ax"); t.style.removeProperty("left");
+      t.hidden = false;
+      if (g.mode === "wrong") {
+        const next = i + 1 < n ? i + 1 : i - 1;
+        const here = t.parentElement.getBoundingClientRect(), there = tips[next].parentElement.getBoundingClientRect();
+        const w = t.getBoundingClientRect().width;
+        t.style.setProperty("--ax", Math.max(14, Math.min(w - 14, w / 2 + (there.left - here.left))) + "px");
+      }
+      if (g.mode === "vanish") {
+        timers.push(setTimeout(() => { t.hidden = true; }, wordsIn(g.items[i][1]) * MS_PER_WORD));
+      }
+    };
+    if (g.mode === "late") timers.push(setTimeout(fire, LATE_MS)); else fire();
+  }
+  function build() {
+    const g = GOES[turn];
+    $("bar").innerHTML = "";
+    tips = [];
+    g.items.forEach((it, i) => {
+      const w = document.createElement("span"); w.className = "tb";
+      const b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", it[0]); b.innerHTML = ICONS[i];
+      const t = document.createElement("div"); t.className = "tip"; t.hidden = true; t.id = "tip" + i; t.setAttribute("role", "tooltip"); t.textContent = it[1];
+      b.setAttribute("aria-describedby", t.id);
+      b.addEventListener("pointerenter", () => showTip(i));
+      b.addEventListener("focus", () => showTip(i));
+      b.addEventListener("pointerleave", hideTips);
+      b.addEventListener("blur", hideTips);
+      b.addEventListener("click", (e) => {
+        const r = b.getBoundingClientRect();
+        if (press(i, e.detail === 0)) confetti(r.left + r.width / 2, r.top + r.height / 2);
+      });
+      w.append(b, t); $("bar").appendChild(w); tips.push(t);
+    });
+    $("goal").textContent = "Go " + (turn + 1) + " of " + TURNS + ": press the button that does this: \u201c" + g.items[g.goal][1].replace(/^(Home|Back|Forward)\. /, "") + "\u201d";
+    $("how").textContent = "Goes used: " + turn + " of " + TURNS;
+  }
+  // Returns true on a right press. A keyboard press keeps the player's place: focus goes to the next go's first button.
+  function press(i, byKey) {
+    const g = GOES[turn];
+    if (!g) return false;
+    if (i !== g.goal) { $("msg").textContent = "That one is " + g.items[i][0] + ". Not that."; return false; }
+    hideTips();
+    $("msg").textContent = g.done;
+    turn++;
+    $("how").textContent = "Goes used: " + turn + " of " + TURNS;
+    if (turn >= TURNS) {
+      $("bar").innerHTML = ""; $("goal").textContent = "That was the last go. Nothing left to hover.";
+      $("reset").focus();
+    } else {
+      build();
+      if (byKey) $("bar").querySelector("button").focus();
+    }
+    return true;
+  }
+  function start() {
+    turn = 0; timers = [];
+    $("msg").textContent = "";
+    build();
+  }
+  $("reset").onclick = () => { start(); const b = $("bar").querySelector("button"); if (b) b.focus(); };
+  $("n").textContent = WORDS[TURNS];
+  start();
+</script>
+</body>
+</html>

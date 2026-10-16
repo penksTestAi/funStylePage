@@ -17,6 +17,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 
 | Type | What it does |
 |---|---|
+| `checkbox` | A Select all box and four boxes that disagree, go stale and uncheck each other until, on the sixth press, they agree. Click or Tab, Space, Enter and arrows. |
 | `toast` | A notification that wants dismissing, and a dismiss button with plans of its own. Five goes. |
 | `spend` | A huge bank balance and a shopping list of absurd things to buy. |
 | `days` | A counter of days since an incident, with a button to report another one. |

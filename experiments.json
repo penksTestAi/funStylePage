@@ -1,5 +1,13 @@
 [
   {
+    "slug": "checkbox-0041",
+    "type": "checkbox",
+    "title": "Select all",
+    "blurb": "One box to select everything. Four boxes with their own views.",
+    "date": "2026-10-16T22:21:06.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A large checked box above four small boxes, one of them tipping over, with a tick drifting between them\">\n    <g class=\"wobble\"><rect x=\"20\" y=\"14\" width=\"40\" height=\"40\" rx=\"8\" fill=\"#2bb673\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M29 35l8 8 15-18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g>\n    <g><rect x=\"76\" y=\"70\" width=\"22\" height=\"22\" rx=\"5\" class=\"sheet\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M81 81l4 4 7-9\" fill=\"none\" stroke=\"#1a6ef0\" stroke-width=\"3\" stroke-linecap=\"round\"/></g>\n    <g class=\"roll\"><rect x=\"106\" y=\"70\" width=\"22\" height=\"22\" rx=\"5\" class=\"sheet\" stroke=\"currentColor\" stroke-width=\"2.5\"/></g>\n    <g class=\"bob\"><rect x=\"136\" y=\"70\" width=\"22\" height=\"22\" rx=\"5\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M141 81l4 4 7-9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\"/></g>\n    <g class=\"pulse\"><rect x=\"166\" y=\"70\" width=\"22\" height=\"22\" rx=\"5\" class=\"sheet\" stroke=\"#ff5c8a\" stroke-width=\"2.5\"/></g>\n    <path d=\"M60 34h60M120 34v28\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-dasharray=\"4 5\" stroke-linecap=\"round\"/>\n  </svg>"
+  },
+  {
     "slug": "toast-0040",
     "type": "toast",
     "title": "Toast",

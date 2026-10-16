@@ -87,3 +87,4 @@ Then open http://localhost:8000/.
 
 [MIT](LICENSE).
 | `toggle` | A settings switch that will not stay off. Switch it off and it comes back on after a shorter wait each time, and a related switch appears (four times). The fifth time it stays off. Mouse or keyboard (Tab, Space or Enter). Nothing is sent or kept. |
+| `pagination` | A search for how to boil an egg. Every Next lands on a slightly less useful page and the page count keeps growing (3, 5, 8, 12, 18, 26) until the seventh page, which is the answer. Mouse or keyboard. Nothing is sent or kept. |

@@ -1,5 +1,13 @@
 [
   {
+    "slug": "pagination-0032",
+    "type": "pagination",
+    "title": "Pagination",
+    "blurb": "Next is a page. The page count is a guess.",
+    "date": "2026-10-16T04:25:00.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A stack of result pages with a search lens, and a row of page tabs that keeps getting longer\">\n    <g class=\"bob\"><rect x=\"34\" y=\"18\" width=\"92\" height=\"66\" rx=\"6\" fill=\"#fff\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <path d=\"M46 36h68M46 50h68M46 64h44\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\"/></g>\n    <g class=\"pulse\"><circle cx=\"146\" cy=\"40\" r=\"14\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M156 50l12 12\" stroke=\"currentColor\" stroke-width=\"4\" stroke-linecap=\"round\"/></g>\n    <g class=\"roll\"><rect x=\"20\" y=\"98\" width=\"16\" height=\"12\" rx=\"3\" fill=\"#1a6ef0\" stroke=\"currentColor\" stroke-width=\"2\"/><rect x=\"42\" y=\"98\" width=\"16\" height=\"12\" rx=\"3\" fill=\"#fff\" stroke=\"currentColor\" stroke-width=\"2\"/><rect x=\"64\" y=\"98\" width=\"16\" height=\"12\" rx=\"3\" fill=\"#fff\" stroke=\"currentColor\" stroke-width=\"2\"/><rect x=\"86\" y=\"98\" width=\"16\" height=\"12\" rx=\"3\" fill=\"#fff\" stroke=\"currentColor\" stroke-width=\"2\"/><rect x=\"108\" y=\"98\" width=\"16\" height=\"12\" rx=\"3\" fill=\"#fff\" stroke=\"currentColor\" stroke-width=\"2\"/></g>\n  </svg>"
+  },
+  {
     "slug": "toggle-0031",
     "type": "toggle",
     "title": "Toggle",

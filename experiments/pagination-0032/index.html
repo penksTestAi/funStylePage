@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toggle · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .spin { animation: spin 5s linear infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .drop { animation: drop 1.4s linear infinite; }
+  .d2 { animation-delay: .45s; }
+  .d3 { animation-delay: .9s; }
+  .bob, .spin, .roll, .wobble, .pulse, .drop { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  @keyframes drop { 0% { transform: translateY(-8px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .sheet, .hero .tab { fill: var(--paper); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+
+  .search { max-width: 440px; margin: 16px auto 8px; text-align: left; border: 3px solid var(--ink); border-radius: 999px; padding: 8px 16px; background: var(--soft); }
+  .stats { max-width: 440px; margin: 0 auto 8px; text-align: left; font-size: .9rem; opacity: .75; }
+  .res { list-style: none; max-width: 440px; margin: 0 auto; padding: 0; text-align: left; }
+  .res li { padding: 10px 0; border-top: 1px solid var(--ink); }
+  .res li b { display: block; color: var(--accent); }
+  .res li small { display: block; opacity: .75; }
+  .pager { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 16px 0; }
+  .pager span { font-variant-numeric: tabular-nums; min-width: 8em; }
+  button:disabled { opacity: .4; cursor: default; }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .msg { min-height: 2.4em; }
+  .sr-msg { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+</head>
+<body>
+<main>
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A stack of result pages with a search lens, and a row of page tabs">
+    <g class="bob"><rect class="sheet" x="34" y="18" width="92" height="66" rx="6" stroke="currentColor" stroke-width="2.5"/>
+    <path d="M46 36h68M46 50h68M46 64h44" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></g>
+    <g class="pulse"><circle cx="146" cy="40" r="14" fill="#ffb020" stroke="currentColor" stroke-width="2.5"/><path d="M156 50l12 12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></g>
+    <g class="roll"><rect x="20" y="98" width="16" height="12" rx="3" fill="#1a6ef0" stroke="currentColor" stroke-width="2"/><rect class="tab" x="42" y="98" width="16" height="12" rx="3" stroke="currentColor" stroke-width="2"/><rect class="tab" x="64" y="98" width="16" height="12" rx="3" stroke="currentColor" stroke-width="2"/><rect class="tab" x="86" y="98" width="16" height="12" rx="3" stroke="currentColor" stroke-width="2"/><rect class="tab" x="108" y="98" width="16" height="12" rx="3" stroke="currentColor" stroke-width="2"/></g>
+  </svg></div>
+<h1>Pagination</h1><p class="blurb">Next is a page. The page count is a guess.</p>
+<div class="search" aria-label="Search query">how to boil an egg</div>
+<div class="stats" id="stats"></div>
+<ol class="res" id="res" tabindex="-1" aria-label="Results"></ol>
+<div class="pager"><button type="button" class="ghost" id="prev">Previous</button><span id="pg" aria-live="polite"></span><button type="button" id="next">Next</button></div>
+<div class="msg" id="msg" role="status" aria-live="polite"></div>
+<a class="back" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled || calm()) return;
+    const r = b.getBoundingClientRect();
+    const x = e.detail ? e.clientX : r.left + r.width / 2;
+    const y = e.detail ? e.clientY : r.top + r.height / 2;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  });
+
+  const $ = (id) => document.getElementById(id);
+  // Each Next lands on a page a little less useful, and the page count grows. The last page is the answer.
+  const TOTAL = [3, 5, 8, 12, 18, 26, 7];
+  const P = [
+    [["Boil an egg: the simple method", "Cover with water, boil, wait.", "recipes.example"], ["How to boil an egg (8 minutes)", "Eight minutes for firm, six for soft.", "kitchen.example"], ["Egg boiling times, explained", "A chart, mostly.", "eggs.example"]],
+    [["Why eggs are called eggs", "A short history of the word.", "words.example"], ["Boiling points of common liquids", "Water is in the third row.", "science.example"], ["10 egg facts you may have known", "Number 7 is about boiling.", "facts.example"]],
+    [["Saucepan buyers guide 2019", "Eleven pans compared. Eggs are mentioned once.", "pans.example"], ["A brief history of the kettle", "Steam, mostly.", "history.example"], ["Chickens: a field guide", "Do not boil the chicken.", "farm.example"]],
+    [["Is breakfast the most important meal?", "Studies disagree, politely.", "health.example"], ["Top 12 breakfast cereals ranked", "Not eggs.", "lists.example"], ["Timers through the ages", "Sand, then not sand.", "clocks.example"]],
+    [["Water: a documentary review", "Three stars. Wet.", "film.example"], ["Which hen came first, a debate", "Page 4 of 9 comments.", "forum.example"], ["Related searches: how to boil an egg", "You are here, in a sense.", "search.example"]],
+    [["Nine more pages about eggs", "Press Next to see them.", "more.example"], ["Egg-shaped objects in architecture", "Several, all unboilable.", "design.example"], ["You may also like: toast", "Toast is not an egg.", "ads.example"]],
+    [["Boil an egg: place it in boiling water for 8 minutes", "That was it. That was the answer.", "you.example"]]
+  ];
+  let p = 0, seen = 0;
+  const sr = (t) => { $("msg").textContent = t; };
+  function show() {
+    const res = $("res");
+    res.textContent = "";
+    P[p].forEach(([t, d, u]) => {
+      const li = document.createElement("li");
+      const b = document.createElement("b"); b.textContent = t;
+      const s = document.createElement("small"); s.textContent = d + " (" + u + ")";
+      li.append(b, s);
+      res.appendChild(li);
+    });
+    $("pg").textContent = "Page " + (p + 1) + " of " + TOTAL[p];
+    $("stats").textContent = p === 6 ? "1 result" : "About " + (TOTAL[p] * 3 * 1000 - p * 217).toLocaleString("en-US") + " results";
+    $("prev").disabled = p === 0;
+    $("next").disabled = p === 6;
+    if (p === 6) sr("That is the last page. It is also the answer.");
+    else sr("");
+  }
+  $("next").onclick = () => {
+    if (p < 6) p++;
+    show();
+    $("res").focus({ preventScroll: true });
+    if (p === 6) $("prev").focus();
+  };
+  $("prev").onclick = () => {
+    if (p > 0) p--;
+    show();
+    if (p === 0) $("next").focus();
+  };
+  show();
+</script>
+</body>
+</html>

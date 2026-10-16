@@ -45,6 +45,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 | `autocorrect` | A text box that corrects your words into slightly worse ones, each with a confident "Did you mean...?" chip. Undoing a word is possible but takes presses, and each one you win makes the next cost more (up to 6). Send always works. Type or paste; mouse or keyboard (Tab to the chips, Enter). Nothing typed is sent or kept. |
 | `tip` | A tablet tipping screen. The suggested percentages (18, 20, 25) creep up every second and new buttons appear. Pick any, type your own, or press No tip twice. Mouse or keyboard. Nothing typed is sent or kept. |
 | `unsubscribe` | An email-preferences page. Press Unsubscribe and it finds another list you are still on (ten in all, under stranger names). The last press ends it. Mouse or keyboard. Nothing is sent or kept. |
+| `update` | A "Restart to update" prompt. "Remind me later" offers fewer and smaller options each time, until only "Restart now" is left (five prompts in all). Mouse or keyboard. Nothing is sent or kept. |
 | `badge` | An app icon with a red notification count. Mark all as read and it goes to 0, then finds a new reason to grow (eight in all; the last one is nothing). Mouse or keyboard. Nothing is sent or kept. |
 
 All copy, mechanics, illustrations and motion are original. neal.fun is the inspiration for the style; none of its games, art or ideas are copied.

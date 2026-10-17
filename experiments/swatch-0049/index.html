@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Swatch · games and stuff</title>
+<style>
+
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; overflow-x: clip; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button[aria-disabled="true"] { opacity: .6; cursor: default; }
+  button.ghost { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .c1 { animation: crumb 2.2s ease-in-out infinite; }
+  .c2 { animation: crumb 2.2s ease-in-out .5s infinite; }
+  .c3 { animation: crumb 2.2s ease-in-out 1s infinite; }
+  .peck { animation: peck 1.6s ease-in-out infinite; }
+  .bob, .roll, .wobble, .pulse, .c1, .c2, .c3, .peck { transform-box: fill-box; transform-origin: center; }
+  @keyframes crumb { 50% { transform: translateY(-3px) scale(.85); } }
+  @keyframes peck { 50% { transform: rotate(-12deg) translateY(2px); } }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .sheet { fill: var(--paper); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+  .goal { min-height: 1.6em; font-weight: 700; }
+  .msg { min-height: 2.4em; }
+  .hint { font-size: .9rem; opacity: .75; text-wrap: balance; }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .pick { display: flex; justify-content: center; gap: 12px; align-items: stretch; margin: 12px auto 0; max-width: 360px; }
+  .well { flex: 1; border-radius: 8px; min-height: 110px; display: flex; align-items: flex-end; justify-content: center; padding: 6px; box-sizing: border-box; font-size: .8rem; }
+  .well span { background: var(--paper); color: var(--ink); border-radius: 4px; padding: 2px 6px; font-variant-numeric: tabular-nums; }
+  #chosen { box-shadow: inset 0 0 0 2px var(--ink); flex: .5; }
+  .sliders { max-width: 360px; margin: 16px auto 0; text-align: left; }
+  .sliders label { display: block; font-size: .9rem; margin: 10px 0 2px; }
+  .sliders input { width: 100%; accent-color: var(--accent); margin: 0; }
+  input:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="Two colour squares side by side, one a very slightly different blue from the other, and an eyedropper hovering over them">
+    <rect x="34" y="40" width="56" height="56" rx="6" fill="#1a6ef0" stroke="currentColor" stroke-width="2.5"/>
+    <g class="wobble"><rect x="98" y="40" width="56" height="56" rx="6" fill="#2a78f2" stroke="currentColor" stroke-width="2.5"/></g>
+    <g class="bob"><path d="M150 12l14 14-6 6-14-14zM144 26l14 14-30 24-8-8z" fill="#ffb020" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></g>
+    <circle cx="62" cy="68" r="3" fill="#fff" class="pulse"/>
+    <path d="M10 108h180" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  </svg></div>
+<h1>Swatch</h1><p class="blurb">Choose any colour. The swatch will try.</p>
+<div class="goal" id="goal"></div>
+<div class="pick">
+  <div class="well" id="chosen"><span>you chose <b id="cv"></b></span></div>
+  <div class="well" id="swatch"><span>swatch <b id="sv"></b></span></div>
+</div>
+<div class="sliders">
+  <label for="h">Hue</label><input type="range" id="h" min="0" max="359" step="1">
+  <label for="l">Lightness</label><input type="range" id="l" min="15" max="85" step="1">
+</div>
+<div class="row"><button type="button" id="use" aria-describedby="msg">Use this colour</button></div>
+<div class="msg" id="msg" role="status" aria-live="polite"></div>
+<div class="hint">Click, or Tab, arrows, Enter and Space. Nothing is sent or kept.</div>
+<div class="row"><button type="button" class="ghost" id="reset">Start again</button></div>
+<a class="back" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+
+
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function confetti(x, y) {
+    if (calm()) return;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled || b.getAttribute("aria-disabled") === "true") return;
+    const r = b.getBoundingClientRect();
+    confetti(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2);
+  });
+
+  const $ = (id) => document.getElementById(id);
+  // Each press: [hue shift, lightness shift, message]
+  const OFF = [
+    [14, -8, "Used. The swatch is a little darker than that."],
+    [-10, 6, "Used again. The swatch is now a little lighter and more cyan about it."],
+    [6, -4, "Used. The screen is to blame, we are told."],
+    [-3, 2, "Used. Nearer. You would not notice. You are noticing."],
+    [1, 0, "Used. One shade out. Nobody will say which."],
+  ];
+  let n, sh, sl;
+  function hex(h, s, l) {
+    h = ((h % 360) + 360) % 360; l = Math.max(0, Math.min(100, l));
+    s /= 100; l /= 100;
+    const a = s * Math.min(l, 1 - l);
+    const f = (k) => {
+      const q = (k + h / 30) % 12;
+      const c = l - a * Math.max(-1, Math.min(q - 3, 9 - q, 1));
+      return Math.round(255 * c).toString(16).padStart(2, "0");
+    };
+    return "#" + f(0) + f(8) + f(4);
+  }
+  function show() {
+    const h = +$("h").value, l = +$("l").value;
+    const c = hex(h, 80, l), s = hex(h + sh, 80, l + sl);
+    $("chosen").style.background = c;
+    $("swatch").style.background = s;
+    $("cv").textContent = c;
+    $("sv").textContent = s;
+    $("h").setAttribute("aria-valuetext", "hue " + h + " degrees");
+    $("l").setAttribute("aria-valuetext", "lightness " + l + " percent");
+  }
+  function press() {
+    if (n >= OFF.length + 1) return;
+    if (n < OFF.length) {
+      sh = OFF[n][0]; sl = OFF[n][1];
+      $("msg").textContent = OFF[n][2];
+      n++;
+    } else {
+      sh = 0; sl = 0; n++;
+      $("goal").textContent = "The swatch matches.";
+      $("msg").textContent = "Same colour, both boxes. It was never the swatch. It was a slightly different you.";
+      $("use").textContent = "Done";
+      $("use").setAttribute("aria-disabled", "true");
+    }
+    show();
+  }
+  $("use").onclick = press;
+  $("h").oninput = show;
+  $("l").oninput = show;
+  function start() {
+    n = 0; sh = 16; sl = -9;
+    $("h").value = 210; $("l").value = 50;
+    $("use").removeAttribute("aria-disabled");
+    $("use").textContent = "Use this colour";
+    $("goal").textContent = "Make the swatch match the colour you chose.";
+    $("msg").textContent = "";
+    show();
+  }
+  $("reset").onclick = start;
+  start();
+</script>
+</body>
+</html>

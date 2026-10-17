@@ -1,5 +1,13 @@
 [
   {
+    "slug": "swatch-0049",
+    "type": "swatch",
+    "title": "Swatch",
+    "blurb": "Choose any colour. The swatch will try.",
+    "date": "2026-10-17T14:30:00.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"Two colour squares side by side, one a very slightly different blue from the other, and an eyedropper hovering over them\">\n    <rect x=\"34\" y=\"40\" width=\"56\" height=\"56\" rx=\"6\" fill=\"#1a6ef0\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <g class=\"wobble\"><rect x=\"98\" y=\"40\" width=\"56\" height=\"56\" rx=\"6\" fill=\"#2a78f2\" stroke=\"currentColor\" stroke-width=\"2.5\"/></g>\n    <g class=\"bob\"><path d=\"M150 12l14 14-6 6-14-14zM144 26l14 14-30 24-8-8z\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/></g>\n    <circle cx=\"62\" cy=\"68\" r=\"3\" fill=\"#fff\" class=\"pulse\"/>\n    <path d=\"M10 108h180\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n  </svg>"
+  },
+  {
     "slug": "feed-0048",
     "type": "feed",
     "title": "Feed",

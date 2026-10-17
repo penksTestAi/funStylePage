@@ -1,5 +1,13 @@
 [
   {
+    "slug": "upload-0046",
+    "type": "upload",
+    "title": "Upload",
+    "blurb": "Drop a file here. It will be looked at.",
+    "date": "2026-10-17T08:20:38.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A dashed drop zone with a sheet of paper that hovers above it and a small arrow that never lands\">\n    <g class=\"wobble\"><rect x=\"30\" y=\"62\" width=\"140\" height=\"42\" rx=\"8\" class=\"sheet\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-dasharray=\"8 6\"/></g>\n    <g class=\"bob\"><path d=\"M88 18h20l10 10v28H88z\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M108 18v10h10\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/></g>\n    <g class=\"pulse\"><path d=\"M103 66v-14m-6 6l6-7 6 7\" fill=\"none\" stroke=\"#1a6ef0\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g>\n    <circle cx=\"48\" cy=\"83\" r=\"3\" fill=\"#ff5c8a\"/><circle cx=\"158\" cy=\"83\" r=\"3\" fill=\"#2bb673\"/>\n    <path d=\"M10 112h180\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n  </svg>"
+  },
+  {
     "slug": "hamburger-0045",
     "type": "hamburger",
     "title": "Hamburger",

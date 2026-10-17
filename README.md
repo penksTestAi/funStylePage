@@ -17,6 +17,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 
 | Type | What it does |
 |---|---|
+| `upload` | A file drop zone that never reads the file: it slides aside, sticks at 99%, calls the nothing too small, restarts at 0%, and on the sixth try reports 0 files uploaded. Drop, click, or Tab, Enter and Space. Nothing is read or sent. |
 | `hamburger` | A menu icon that runs away, turns into an X without opening, opens and shuts at once, offers one item, then none, and on the sixth press opens properly. Mouse or keyboard (Tab, Enter or Space). Nothing is sent or kept. |
 | `stepper` | A number field whose plus and minus skip, miscount, go the wrong way and refuse for seven presses, then count honestly so you can reach 7. Mouse or keyboard (Tab, arrows, Enter, Space). |
 | `breadcrumb` | A breadcrumb trail back to Home that grows a second Home, hides in dots, reverses and shuffles for four presses, then settles on the fifth. Mouse or keyboard (Tab, arrows, Enter, Space). |

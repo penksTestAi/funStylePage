@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Are you sure? · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .bob, .roll, .wobble, .pulse { transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .sheet { fill: var(--paper); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+  .folder { margin: 20px auto 8px; max-width: 320px; }
+  .folder .name { font-weight: 700; }
+  .folder .sub { opacity: .75; font-size: .95rem; min-height: 1.4em; }
+  .goal { min-height: 1.6em; font-weight: 700; }
+  .msg { min-height: 2.4em; }
+  .hint { font-size: .9rem; opacity: .75; }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 5; }
+  .overlay[hidden] { display: none; }
+  .dlg { background: var(--paper); color: var(--ink); border-radius: 12px; padding: 20px; max-width: 340px; width: 100%; box-shadow: 0 0 0 2px var(--ink); text-align: left; }
+  .dlg h2 { font-size: 1.25rem; margin: 0 0 6px; }
+  .dlg p { margin: 0 0 8px; }
+  .dlg .note { font-size: .9rem; opacity: .8; min-height: 2.6em; }
+  .dlg .btns { display: flex; gap: 8px; justify-content: flex-end; }
+  .dlg .btns.flip { flex-direction: row-reverse; justify-content: flex-start; }
+  .dlg .step { font-size: .8rem; opacity: .6; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A folder with a dialog box in front of it, a bin beside it, and a question mark that keeps bouncing">
+    <g class="wobble"><path d="M16 40h34l8 10h46v50H16z" fill="#ffb020" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></g>
+    <g class="bob"><rect x="70" y="22" width="84" height="56" rx="8" class="sheet" stroke="currentColor" stroke-width="2.5"/><path d="M70 38h84" stroke="currentColor" stroke-width="2.5"/><rect x="80" y="54" width="26" height="14" rx="4" fill="#1a6ef0" stroke="currentColor" stroke-width="2"/><rect x="116" y="54" width="28" height="14" rx="4" fill="#ff5c8a" stroke="currentColor" stroke-width="2"/></g>
+    <g class="roll"><path d="M160 62h26l-3 42h-20z" fill="#2bb673" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M156 62h34" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></g>
+    <g class="pulse"><circle cx="170" cy="26" r="11" class="sheet" stroke="currentColor" stroke-width="2.5"/><path d="M166 23c0-6 9-6 9 0 0 4-5 4-5 8m0 4v1" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></g>
+  </svg></div>
+<h1>Are you sure?</h1><p class="blurb">One folder. One dialog. It has questions.</p>
+<div class="goal" id="goal">Delete the folder.</div>
+<div class="card folder"><div class="name">Holiday photos (final)</div><div class="sub" id="sub">3,412 items. One is a thumb.</div>
+<button type="button" id="open">Delete folder</button></div>
+<div class="msg" id="msg" role="status" aria-live="polite"></div>
+<div class="hint">Click, or Tab, arrows, Enter and Space. Escape tries.</div>
+<div class="row"><button type="button" class="ghost" id="reset">Start again</button></div>
+<a class="back" href="../../">&larr; all games and stuff</a>
+</main>
+<div class="overlay" id="overlay" hidden>
+  <div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dt" aria-describedby="dd" id="dlg">
+    <div class="step" id="step"></div>
+    <h2 id="dt">Delete “Holiday photos (final)”?</h2>
+    <p id="dd">Are you sure?</p>
+    <div class="note" id="note"></div>
+    <div class="btns" id="btns"><button type="button" class="ghost" id="b1">Cancel</button><button type="button" id="b2">Delete</button></div>
+  </div>
+</div>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function confetti(x, y) {
+    if (calm()) return;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    confetti(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2);
+  });
+
+  const $ = (id) => document.getElementById(id);
+  const page = $("page"), ov = $("overlay"), btns = $("btns"), b1 = $("b1"), b2 = $("b2"), trigger = $("open");
+  // b1 = Cancel, b2 = Delete in goes 1, 3, 4, 5. In go 2 the labels and looks swap.
+  const NOTES = [
+    "",
+    "",
+    "Delete and Cancel have swapped. Read before you press.",
+    "Tab will stay on this button. Arrow keys work.",
+    "Tab can leave. Escape is busy.",
+    "Tab stays inside now. Escape cancels."
+  ];
+  let go, isOpen, deleted;
+  function setLabels() {
+    const swap = go === 2;
+    b1.textContent = swap ? "Delete" : "Cancel";
+    b2.textContent = swap ? "Cancel" : "Delete";
+    b1.className = swap ? "" : "ghost";
+    b2.className = swap ? "ghost" : "";
+    btns.classList.toggle("flip", false);
+  }
+  const delBtn = () => (go === 2 ? b1 : b2);
+  const canBtn = () => (go === 2 ? b2 : b1);
+  function show(msg) {
+    isOpen = true; ov.hidden = false;
+    setLabels();
+    $("step").textContent = "Question " + go + " of 5";
+    $("dd").textContent = go === 1 ? "Are you sure?" : go === 5 ? "Are you sure? Truly the last time." : "Are you really sure?";
+    $("note").textContent = msg || NOTES[go];
+    page.inert = go === 5; // only the last go keeps the page out of reach
+    (go === 2 ? canBtn() : go === 5 ? delBtn() : canBtn()).focus();
+  }
+  function hide() {
+    isOpen = false; ov.hidden = true; page.inert = false;
+    trigger.focus();
+  }
+  function onDelete() {
+    if (go >= 5) {
+      deleted = true; hide();
+      $("goal").textContent = "Gone.";
+      $("sub").textContent = "Deleted. All 3,412. Not the thumb.";
+      $("msg").textContent = "Five questions for one folder. It was an empty folder.";
+      trigger.disabled = true;
+      $("reset").focus(); // the trigger is disabled now; without this focus falls to the body
+      const r = $("goal").getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + r.height / 2);
+      return;
+    }
+    go++;
+    const reopened = go === 2 ? "Closed. Reopened. It does that." : null;
+    if (go === 2) { hide(); setTimeout(() => show(reopened), 250); } else show();
+  }
+  function onCancel() {
+    if (go >= 5) { hide(); $("msg").textContent = "Cancelled. The folder is still there. So is the dialog, if you want it."; return; }
+    hide(); setTimeout(() => show("Cancelled. Are you sure you want to cancel?"), 250);
+  }
+  b1.onclick = () => (go === 2 ? onDelete() : onCancel());
+  b2.onclick = () => (go === 2 ? onCancel() : onDelete());
+  trigger.onclick = () => { $("msg").textContent = ""; show(); };
+  document.addEventListener("keydown", (e) => {
+    if (!isOpen) return;
+    const bs = [b1, b2].sort((a, b) => (a.compareDocumentPosition(b) & 4 ? -1 : 1));
+    // visual order: go 2 is not reordered, labels swap, so DOM order is visual order.
+    if (e.key === "Escape") {
+      if (go === 4) { e.preventDefault(); $("note").textContent = "Escape is busy."; return; }
+      e.preventDefault(); onCancel(); return;
+    }
+    if (e.key === "Tab") {
+      if (go === 3) { e.preventDefault(); canBtn().focus(); return; } // the wrong trap
+      if (go === 4) return;                                           // no trap at all
+      if (go === 1 || go === 2 || go === 5) {                          // proper wrap
+        const i = bs.indexOf(document.activeElement);
+        if (i < 0) { e.preventDefault(); bs[0].focus(); return; }
+        if (e.shiftKey && i === 0) { e.preventDefault(); bs[1].focus(); }
+        else if (!e.shiftKey && i === 1) { e.preventDefault(); bs[0].focus(); }
+      }
+    } else if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && bs.includes(document.activeElement)) {
+      e.preventDefault(); bs[bs.indexOf(document.activeElement) ^ 1].focus();
+    }
+  });
+  function start() {
+    go = 1; isOpen = false; deleted = false; ov.hidden = true; page.inert = false;
+    trigger.disabled = false;
+    $("goal").textContent = "Delete the folder.";
+    $("sub").textContent = "3,412 items. One is a thumb.";
+    $("msg").textContent = "";
+  }
+  $("reset").onclick = start;
+  start();
+</script>
+</body>
+</html>

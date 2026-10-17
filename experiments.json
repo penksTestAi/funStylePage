@@ -1,5 +1,13 @@
 [
   {
+    "slug": "modal-0042",
+    "type": "modal",
+    "title": "Are you sure?",
+    "blurb": "Delete one folder. The dialog has five questions and a mind of its own.",
+    "date": "2026-10-17T00:21:57.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A folder with a dialog box in front of it, a bin beside it, and a question mark that keeps bouncing\">\n    <g class=\"wobble\"><path d=\"M16 40h34l8 10h46v50H16z\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/></g>\n    <g class=\"bob\"><rect x=\"70\" y=\"22\" width=\"84\" height=\"56\" rx=\"8\" class=\"sheet\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M70 38h84\" stroke=\"currentColor\" stroke-width=\"2.5\"/><rect x=\"80\" y=\"54\" width=\"26\" height=\"14\" rx=\"4\" fill=\"#1a6ef0\" stroke=\"currentColor\" stroke-width=\"2\"/><rect x=\"116\" y=\"54\" width=\"28\" height=\"14\" rx=\"4\" fill=\"#ff5c8a\" stroke=\"currentColor\" stroke-width=\"2\"/></g>\n    <g class=\"roll\"><path d=\"M160 62h26l-3 42h-20z\" fill=\"#2bb673\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><path d=\"M156 62h34\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\"/></g>\n    <g class=\"pulse\"><circle cx=\"170\" cy=\"26\" r=\"11\" class=\"sheet\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M166 23c0-6 9-6 9 0 0 4-5 4-5 8m0 4v1\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"/></g>\n  </svg>"
+  },
+  {
     "slug": "checkbox-0041",
     "type": "checkbox",
     "title": "Select all",

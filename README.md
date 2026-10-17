@@ -17,6 +17,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 
 | Type | What it does |
 |---|---|
+| `hamburger` | A menu icon that runs away, turns into an X without opening, opens and shuts at once, offers one item, then none, and on the sixth press opens properly. Mouse or keyboard (Tab, Enter or Space). Nothing is sent or kept. |
 | `stepper` | A number field whose plus and minus skip, miscount, go the wrong way and refuse for seven presses, then count honestly so you can reach 7. Mouse or keyboard (Tab, arrows, Enter, Space). |
 | `breadcrumb` | A breadcrumb trail back to Home that grows a second Home, hides in dots, reverses and shuffles for four presses, then settles on the fifth. Mouse or keyboard (Tab, arrows, Enter, Space). |
 | `modal` | An "Are you sure?" dialog that reopens, swaps its buttons and traps focus in the wrong place for four questions, then behaves on the fifth. Mouse or keyboard (Tab, arrows, Enter, Escape). |

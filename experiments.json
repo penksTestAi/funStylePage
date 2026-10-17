@@ -1,5 +1,13 @@
 [
   {
+    "slug": "hamburger-0045",
+    "type": "hamburger",
+    "title": "Hamburger",
+    "blurb": "Open the menu. The icon would rather you didn't.",
+    "date": "2026-10-17T06:20:58.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A browser bar with a three-line menu icon sliding away from a small cursor\">\n    <g class=\"wobble\"><rect x=\"20\" y=\"22\" width=\"160\" height=\"76\" rx=\"8\" class=\"sheet\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M20 44h160\" stroke=\"currentColor\" stroke-width=\"2\"/></g>\n    <g class=\"roll\"><rect x=\"34\" y=\"54\" width=\"34\" height=\"6\" rx=\"3\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2\"/><rect x=\"34\" y=\"66\" width=\"34\" height=\"6\" rx=\"3\" fill=\"#2bb673\" stroke=\"currentColor\" stroke-width=\"2\"/><rect x=\"34\" y=\"78\" width=\"34\" height=\"6\" rx=\"3\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"2\"/></g>\n    <g class=\"bob\"><path d=\"M128 60l0 22 6-5 5 11 5-2-5-11 8-1z\" fill=\"#1a6ef0\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"/></g>\n    <circle cx=\"30\" cy=\"33\" r=\"3\" fill=\"#ff5c8a\"/><circle cx=\"40\" cy=\"33\" r=\"3\" fill=\"#ffb020\"/>\n    <path d=\"M10 112h180\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n  </svg>"
+  },
+  {
     "slug": "stepper-0044",
     "type": "stepper",
     "title": "Stepper",

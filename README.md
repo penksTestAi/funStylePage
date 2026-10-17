@@ -17,6 +17,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 
 | Type | What it does |
 |---|---|
+| `shortcut` | A shortcut list, opened by the button or by pressing ?, that names the wrong keys for Save, Undo and Print (Ctrl+Z, Alt+F4, F1, Ctrl+Shift+S, maybe), and on the sixth press lists Ctrl+S. Click, or Tab, Enter and Space, or ?. Nothing is sent or kept. |
 | `zoom` | A zoom control, Zoom in and Zoom out alike, that zooms the wrong way or onto the wrong thing (further out, the tree, the cow, some sky, everything) while you look for a very small dog, and on the sixth press zooms onto it. Click, or Tab, Enter and Space. Nothing is sent or kept. |
 | `swatch` | A colour picker with hue and lightness sliders. The swatch never quite matches the colour you chose (warmer, beiger, nearer), and on the sixth press of Use this colour it does. Mouse or keyboard (Tab, arrows, Enter, Space). Nothing is sent or kept. |
 | `feed` | A feed with a Load more button that appends the same three posts each time, slightly changed (a like, an edit, an advert, an update), and ends on the sixth press with the end of the feed. Click, or Tab, Enter and Space. Nothing is sent or kept. |

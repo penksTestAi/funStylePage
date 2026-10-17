@@ -1,5 +1,13 @@
 [
   {
+    "slug": "breadcrumb-0043",
+    "type": "breadcrumb",
+    "title": "Breadcrumbs",
+    "blurb": "Get back to Home. The trail has other plans for five presses.",
+    "date": "2026-10-17T02:24:30.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A slice of bread, a trail of crumbs across the grass, and a small house at the end of it with a bird eyeing the crumbs\">\n    <g class=\"wobble\"><path d=\"M14 54c-6-14 8-24 22-22 10-8 28-8 36 0 14-2 24 10 18 22v26H14z\" fill=\"#e8b45a\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><path d=\"M26 56c8-6 18-6 26 0\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"/></g>\n    <g class=\"c1\"><circle cx=\"86\" cy=\"96\" r=\"4\" fill=\"#e8b45a\" stroke=\"currentColor\" stroke-width=\"2\"/></g>\n    <g class=\"c2\"><circle cx=\"104\" cy=\"100\" r=\"3.5\" fill=\"#e8b45a\" stroke=\"currentColor\" stroke-width=\"2\"/></g>\n    <g class=\"c3\"><circle cx=\"122\" cy=\"94\" r=\"4\" fill=\"#e8b45a\" stroke=\"currentColor\" stroke-width=\"2\"/></g>\n    <g class=\"c1\"><circle cx=\"140\" cy=\"99\" r=\"3.5\" fill=\"#e8b45a\" stroke=\"currentColor\" stroke-width=\"2\"/></g>\n    <path d=\"M10 106h180\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n    <g class=\"bob\"><path d=\"M154 62l26-22 26 22v0\" transform=\"translate(-10 0)\" fill=\"#ff5c8a\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\"/><rect x=\"150\" y=\"62\" width=\"40\" height=\"38\" class=\"sheet\" stroke=\"currentColor\" stroke-width=\"2.5\"/><rect x=\"164\" y=\"78\" width=\"12\" height=\"22\" rx=\"2\" fill=\"#1a6ef0\" stroke=\"currentColor\" stroke-width=\"2\"/></g>\n    <g class=\"peck\"><ellipse cx=\"100\" cy=\"76\" rx=\"10\" ry=\"8\" fill=\"#2bb673\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"92\" cy=\"70\" r=\"1.6\" fill=\"currentColor\"/><path d=\"M88 73l-7 3 7 2\" fill=\"#ffb020\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\"/></g>\n  </svg>"
+  },
+  {
     "slug": "modal-0042",
     "type": "modal",
     "title": "Are you sure?",

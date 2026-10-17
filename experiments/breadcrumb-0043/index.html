@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Breadcrumbs · games and stuff</title>
+<style>
+  :root { --ink: #111; --paper: #fff; --accent: #1a6ef0; --on-accent: #fff; --soft: #e7e7e7; --wall: #dfe8f5; --panel: #b9c2cf; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  }
+  :root[data-theme="dark"] { --ink: #eee; --paper: #161616; --accent: #6aa8ff; --on-accent: #111; --soft: #262626; --wall: #26303d; --panel: #3c4655; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Roboto, system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; text-align: center; }
+  h1 { font-size: 2rem; margin: 24px 0 4px; }
+  .blurb { opacity: .75; margin: 0 0 24px; }
+  button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 16px; cursor: pointer; margin: 4px; }
+  button.ghost { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .big { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 16px 0; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .card { background: var(--soft); border-radius: 8px; padding: 12px; margin: 8px 0; }
+  a.back { display: inline-block; margin-top: 32px; color: var(--accent); }
+  canvas { max-width: 100%; background: var(--soft); border-radius: 8px; touch-action: none; }
+  select { font: inherit; padding: 8px; max-width: 100%; }
+
+  .bob { animation: bob 2.4s ease-in-out infinite; }
+  .roll { animation: roll 3s ease-in-out infinite alternate; }
+  .wobble { animation: wobble 2.6s ease-in-out infinite; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+  .c1 { animation: crumb 2.2s ease-in-out infinite; }
+  .c2 { animation: crumb 2.2s ease-in-out .5s infinite; }
+  .c3 { animation: crumb 2.2s ease-in-out 1s infinite; }
+  .peck { animation: peck 1.6s ease-in-out infinite; }
+  .bob, .roll, .wobble, .pulse, .c1, .c2, .c3, .peck { transform-box: fill-box; transform-origin: center; }
+  @keyframes crumb { 50% { transform: translateY(-3px) scale(.85); } }
+  @keyframes peck { 50% { transform: rotate(-12deg) translateY(2px); } }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes roll { to { transform: translateX(18px); } }
+  @keyframes wobble { 50% { transform: scale(.94, 1.04); } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  .hero { margin: 8px auto 0; max-width: 260px; }
+  .hero svg { width: 100%; height: auto; color: var(--ink); }
+  .hero .sheet { fill: var(--paper); }
+  .confetti { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; animation: pop .9s ease-out forwards; z-index: 9; }
+  @keyframes pop { to { transform: translate(var(--dx), var(--dy)) rotate(360deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+  .goal { min-height: 1.6em; font-weight: 700; }
+  .msg { min-height: 2.4em; }
+  .hint { font-size: .9rem; opacity: .75; }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .file { margin: 20px auto 8px; max-width: 420px; text-align: left; }
+  .file .name { font-weight: 700; }
+  .file .sub { opacity: .75; font-size: .95rem; }
+  nav ol { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 2px; }
+  nav li { display: flex; align-items: center; }
+  nav li + li::before { content: attr(data-sep); opacity: .6; margin: 0 4px; }
+  nav button { margin: 0; padding: 6px 10px; background: var(--paper); color: var(--accent); box-shadow: inset 0 0 0 2px var(--accent); }
+  nav button[aria-current] { color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); font-weight: 700; }
+  .home { font-weight: 700; }
+</style>
+</head>
+<body>
+<main id="page">
+<div class="hero"><svg viewBox="0 0 200 120" role="img" aria-label="A slice of bread, a trail of crumbs across the grass, and a small house at the end of it with a bird eyeing the crumbs">
+    <g class="wobble"><path d="M14 54c-6-14 8-24 22-22 10-8 28-8 36 0 14-2 24 10 18 22v26H14z" fill="#e8b45a" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M26 56c8-6 18-6 26 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></g>
+    <g class="c1"><circle cx="86" cy="96" r="4" fill="#e8b45a" stroke="currentColor" stroke-width="2"/></g>
+    <g class="c2"><circle cx="104" cy="100" r="3.5" fill="#e8b45a" stroke="currentColor" stroke-width="2"/></g>
+    <g class="c3"><circle cx="122" cy="94" r="4" fill="#e8b45a" stroke="currentColor" stroke-width="2"/></g>
+    <g class="c1"><circle cx="140" cy="99" r="3.5" fill="#e8b45a" stroke="currentColor" stroke-width="2"/></g>
+    <path d="M10 106h180" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <g class="bob"><path d="M154 62l26-22 26 22v0" transform="translate(-10 0)" fill="#ff5c8a" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><rect x="150" y="62" width="40" height="38" class="sheet" stroke="currentColor" stroke-width="2.5"/><rect x="164" y="78" width="12" height="22" rx="2" fill="#1a6ef0" stroke="currentColor" stroke-width="2"/></g>
+    <g class="peck"><ellipse cx="100" cy="76" rx="10" ry="8" fill="#2bb673" stroke="currentColor" stroke-width="2.5"/><circle cx="92" cy="70" r="1.6" fill="currentColor"/><path d="M88 73l-7 3 7 2" fill="#ffb020" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></g>
+  </svg></div>
+<h1>Breadcrumbs</h1><p class="blurb">Folders all the way down. Home is up there somewhere.</p>
+<div class="goal" id="goal">Get back to Home.</div>
+<div class="card file"><div class="name">lunch.jpg</div><div class="sub">Not a sandwich. A photo of a sandwich.</div>
+<nav aria-label="Breadcrumb"><ol id="trail"></ol></nav></div>
+<div class="msg" id="msg" role="status" aria-live="polite"></div>
+<div class="hint">Click, or Tab, arrows, Enter and Space.</div>
+<div class="row"><button type="button" class="ghost" id="reset">Start again</button></div>
+<a class="back" href="../../">&larr; all games and stuff</a>
+</main>
+<script>
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function confetti(x, y) {
+    if (calm()) return;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+      s.style.setProperty("--dy", (Math.random() * -160 - 20) + "px");
+      s.style.background = ["#1a6ef0", "#ffb020", "#ff5c8a", "#2bb673"][i % 4];
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect();
+    confetti(e.detail ? e.clientX : r.left + r.width / 2, e.detail ? e.clientY : r.top + r.height / 2);
+  });
+
+  const $ = (id) => document.getElementById(id);
+  const L = { home: "Home", docs: "Documents", tax: "Taxes", y19: "2019", rec: "Receipts", file: "lunch.jpg", home2: "Home" };
+  const FULL = ["home", "docs", "tax", "y19", "rec", "file"];
+  const MSG = [
+    "",
+    "Home is also at the end now. Now it is both.",
+    "The trail got shy. Press the dots to see it.",
+    "Reversed. For your convenience.",
+    "Shuffled. Home is somewhere in the middle.",
+    "Settled. The trail is in order. Press Home."
+  ];
+  let n, expanded, trail, done;
+  const isHome = (k) => k === "home" || k === "home2";
+  function list() {
+    if (done) return { keys: ["home"], sep: "/" };
+    if (n === 0) return { keys: FULL, sep: "/" };
+    if (n === 1) return { keys: FULL.concat("home2"), sep: "/" };
+    if (n === 2) {
+      const all = FULL.concat("home2");
+      return { keys: expanded ? all : ["home", "...", "home2"], sep: "\u00b7" };
+    }
+    if (n === 3) return { keys: FULL.concat("home2").reverse(), sep: "\u2039" };
+    if (n === 4) return { keys: ["docs", "file", "home", "y19", "rec", "home2", "tax"], sep: "~" };
+    return { keys: trail, sep: "\u203a" };
+  }
+  function render(focusKey) {
+    const { keys, sep } = list();
+    const ol = $("trail");
+    ol.textContent = "";
+    keys.forEach((k, i) => {
+      const li = document.createElement("li");
+      if (i) li.dataset.sep = sep;
+      const b = document.createElement("button");
+      b.type = "button"; b.dataset.k = k;
+      if (k === "...") { b.textContent = "\u2026"; b.setAttribute("aria-label", "Show the whole trail"); }
+      else { b.textContent = L[k]; if (isHome(k)) b.className = "home"; }
+      if (i === keys.length - 1 && !done && n >= 5 || (done && i === 0)) b.setAttribute("aria-current", "page");
+      li.appendChild(b); ol.appendChild(li);
+    });
+    const f = ol.querySelector('[data-k="' + focusKey + '"]') || ol.querySelector("button");
+    if (focusKey !== null && f) f.focus();
+  }
+  function press(k) {
+    if (done) return;
+    if (k === "...") { expanded = true; $("msg").textContent = "The whole trail. Both Homes. Do not ask."; render("docs"); return; }
+    if (n >= 5) {
+      if (isHome(k)) {
+        done = true;
+        $("goal").textContent = "Home.";
+        $("msg").textContent = "One crumb. It was the whole trail all along.";
+        render("home");
+        const r = $("goal").getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + r.height / 2);
+        return;
+      }
+      trail = trail.slice(0, trail.indexOf(k) + 1);
+      $("msg").textContent = "Went up. As asked. Suspicious.";
+      render(k); return;
+    }
+    n++; expanded = false;
+    if (n === 5) trail = FULL.slice();
+    $("msg").textContent = MSG[n];
+    render(k === "home2" ? "home2" : k);
+  }
+  $("trail").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) press(b.dataset.k); });
+  $("trail").addEventListener("keydown", (e) => {
+    const bs = [...$("trail").querySelectorAll("button")], i = bs.indexOf(document.activeElement);
+    if (i < 0) return;
+    let j = -1;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") j = (i + 1) % bs.length;
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") j = (i + bs.length - 1) % bs.length;
+    else if (e.key === "Home") j = 0;
+    else if (e.key === "End") j = bs.length - 1;
+    if (j >= 0) { e.preventDefault(); bs[j].focus(); }
+  });
+  function start() {
+    n = 0; expanded = false; trail = FULL.slice(); done = false;
+    $("goal").textContent = "Get back to Home.";
+    $("msg").textContent = "";
+    render(null);
+  }
+  $("reset").onclick = start;
+  start();
+</script>
+</body>
+</html>

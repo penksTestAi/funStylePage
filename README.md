@@ -17,6 +17,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 
 | Type | What it does |
 |---|---|
+| `breadcrumb` | A breadcrumb trail back to Home that grows a second Home, hides in dots, reverses and shuffles for four presses, then settles on the fifth. Mouse or keyboard (Tab, arrows, Enter, Space). |
 | `modal` | An "Are you sure?" dialog that reopens, swaps its buttons and traps focus in the wrong place for four questions, then behaves on the fifth. Mouse or keyboard (Tab, arrows, Enter, Escape). |
 | `checkbox` | A Select all box and four boxes that disagree, go stale and uncheck each other until, on the sixth press, they agree. Click or Tab, Space, Enter and arrows. |
 | `toast` | A notification that wants dismissing, and a dismiss button with plans of its own. Five goes. |

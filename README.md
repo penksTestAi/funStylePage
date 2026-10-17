@@ -17,6 +17,7 @@ Each experiment has one original SVG illustration at the top, and the landing gr
 
 | Type | What it does |
 |---|---|
+| `feed` | A feed with a Load more button that appends the same three posts each time, slightly changed (a like, an edit, an advert, an update), and ends on the sixth press with the end of the feed. Click, or Tab, Enter and Space. Nothing is sent or kept. |
 | `copy` | A copy button that copies its own label, then the button, then eleven of twelve characters, then fails, then goes lowercase, and on the sixth press copies the code properly. Shows a pretend clipboard; the real one is never read or written. Click, or Tab, Enter and Space. |
 | `upload` | A file drop zone that never reads the file: it slides aside, sticks at 99%, calls the nothing too small, restarts at 0%, and on the sixth try reports 0 files uploaded. Drop, click, or Tab, Enter and Space. Nothing is read or sent. |
 | `hamburger` | A menu icon that runs away, turns into an X without opening, opens and shuts at once, offers one item, then none, and on the sixth press opens properly. Mouse or keyboard (Tab, Enter or Space). Nothing is sent or kept. |

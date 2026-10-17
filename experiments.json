@@ -1,5 +1,13 @@
 [
   {
+    "slug": "feed-0048",
+    "type": "feed",
+    "title": "Feed",
+    "blurb": "There is always more. It is mostly this.",
+    "date": "2026-10-17T12:30:00.000Z",
+    "art": "<svg viewBox=\"0 0 200 120\" role=\"img\" aria-label=\"A phone showing three cards, with a fourth card that looks exactly like the first sliding in underneath\">\n    <rect x=\"62\" y=\"8\" width=\"76\" height=\"104\" rx=\"10\" fill=\"#fff\" stroke=\"currentColor\" stroke-width=\"2.5\"/>\n    <g class=\"bob\"><rect x=\"72\" y=\"20\" width=\"56\" height=\"18\" rx=\"4\" fill=\"#1a6ef0\"/><rect x=\"72\" y=\"44\" width=\"56\" height=\"18\" rx=\"4\" fill=\"#ffb020\"/><rect x=\"72\" y=\"68\" width=\"56\" height=\"18\" rx=\"4\" fill=\"#ff5c8a\"/></g>\n    <g class=\"pulse\"><rect x=\"72\" y=\"92\" width=\"56\" height=\"14\" rx=\"4\" fill=\"#1a6ef0\"/></g>\n    <path d=\"M160 40v36m-6-6l6 6 6-6\" fill=\"none\" stroke=\"#2bb673\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"roll\"/>\n    <path d=\"M10 114h180\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n  </svg>"
+  },
+  {
     "slug": "copy-0047",
     "type": "copy",
     "title": "Copy",
